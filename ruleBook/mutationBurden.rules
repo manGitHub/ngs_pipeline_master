@@ -1,0 +1,41 @@
+# vim: syntax=python tabstop=4 expandtab
+# coding: utf-8
+
+
+#Add all annotations back to sample level files and generate Mutation burden qc metrics.
+
+capture_kit = {}    
+for sample in config['sample_references'].keys():
+        subject=SAMPLE_TO_SUBJECT[sample]
+        if config['sample_captures'][sample] in config['capture_list_for_mutationBurden_calc']:
+            capture_kit[sample] = config['sample_captures'][sample]
+            TARGET     +=[subject+"/"+TIME+"/"+sample+"/calls/"+sample+".MuTect.mutationburden.txt"]
+            TARGET     +=[subject+"/"+TIME+"/"+sample+"/calls/"+sample+".strelka.snvs.mutationburden.txt"]
+            TARGET     +=[subject+"/"+TIME+"/"+sample+"/calls/"+sample+".strelka.indels.mutationburden.txt"]
+
+rule MutationBurden:
+        input:
+                txt="{subject}/{TIME}/{sample}/calls/{base}.snpEff.txt",
+                ref="{subject}/{TIME}/annotation/{subject}.Annotations.final.txt",
+                interval=lambda wildcards: config['target_intervals'][capture_kit[wildcards.sample]].replace("target.hg19.merged", "targetbp.hg19.actualmerged"),
+                convertor  = NGS_PIPELINE + "/scripts/addAnnotations2vcf.pl",
+                mutationburden = NGS_PIPELINE + "/scripts/mutationBurden.pl"
+        output:
+                txt="{subject}/{TIME}/{sample}/calls/{base}.annotatedFull.txt",
+                txt2="{subject}/{TIME}/{sample}/calls/{base}.mutationburden.txt"
+        version: "1.0"
+        params:
+                rulename   = "mutationBurden",
+                batch      = config[config['host']]["job_addbackann"],
+                tumor_cov   = lambda wildcards: config['high_conf_somatic_threshold'][capture_kit[wildcards.sample]]['Tumor'],
+                normal_cov  = lambda wildcards: config['high_conf_somatic_threshold'][capture_kit[wildcards.sample]]['Normal'],
+                vaf         = lambda wildcards: config['high_conf_somatic_threshold'][capture_kit[wildcards.sample]]['VAF'],
+        shell: """
+        #######################
+        perl {input.convertor} {input.ref}  {input.txt} > {output.txt}
+        perl {input.mutationburden} {output.txt} {input.interval} {params.tumor_cov} {params.normal_cov} {params.vaf} > {output.txt2} 
+        #######################
+        """
+
+
+

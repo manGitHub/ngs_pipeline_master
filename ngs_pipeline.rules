@@ -278,6 +278,7 @@ include: NGS_PIPELINE +"/ruleBook/Sequenza.rules"
 include: NGS_PIPELINE +"/ruleBook/cnvkit.rules"
 include: NGS_PIPELINE +"/ruleBook/MethlySeq.rules"
 include: NGS_PIPELINE +"/ruleBook/HotSpot_Pileup.rules"
+include: NGS_PIPELINE +"/ruleBook/mutationBurden.rules"
 
 ###########################################################################
 # we have to do it this way as some samples may not have rna or tumor     #
@@ -892,15 +893,18 @@ rule FormatInput:
 ############
 rule CopyAnnotationFile:
 	input:
-		"{subject}/{TIME}/annotation/AnnotationInput.coding.rare.txt"
+		filtered="{subject}/{TIME}/annotation/AnnotationInput.coding.rare.txt",
+		all="{subject}/{TIME}/annotation/AnnotationInput.annotations.final.txt"
 	output:
-		"{subject}/{TIME}/annotation/{subject}.Annotations.coding.rare.txt"
+		filtered="{subject}/{TIME}/annotation/{subject}.Annotations.coding.rare.txt",
+		all="{subject}/{TIME}/annotation/{subject}.Annotations.final.txt"
 	params:
 		rulename   = "caf",
 		batch      = config[config['host']]["job_default"],
 	shell: """
 	#######################
-	cp {input} {output}
+	cp {input.filtered} {output.filtered}
+	cp {input.all} {output.all}
 	#######################
 	"""
 ############
