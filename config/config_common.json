@@ -66,5 +66,15 @@
 		"sureselect.exon.v6"	:{"Normal":"20","Tumor":"20"},
 		"mayo_v5_urt"           :{"Normal":"20","Tumor":"20"},
 		"idt.xgen.exome.res"	:{"Normal":"10","Tumor":"20"}
+	},
+	"capture_list_for_mutationBurden_calc"	: ["clin.ex.v1", "clin.snv.v1", "clin.snv.v2", "seqcapez.hu.ex.v3", "seqcapez.hu.ex.utr.v1", "seqcapez.rms.v1", "wholegenome"],
+	"high_conf_somatic_threshold" : {
+		"clin.ex.v1"	:{"Normal":"20","Tumor":"20","VAF":"0.1"},
+		"seqcapez.hu.ex.v3"	:{"Normal":"20","Tumor":"20","VAF":"0.1"},
+		"seqcapez.hu.ex.utr.v1"	:{"Normal":"20","Tumor":"20","VAF":"0.1"},
+		"clin.snv.v1"	:{"Normal":"20","Tumor":"50","VAF":"0.05"},
+		"clin.snv.v2"	:{"Normal":"20","Tumor":"50","VAF":"0.05"},
+		"seqcapez.rms.v1"	:{"Normal":"20","Tumor":"50","VAF":"0.1"},
+		"wholegenome"	:{"Normal":"5","Tumor":"5","VAF":"0.1"}
 	}
 }
