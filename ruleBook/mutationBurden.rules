@@ -9,9 +9,9 @@ for sample in config['sample_references'].keys():
         subject=SAMPLE_TO_SUBJECT[sample]
         if config['sample_captures'][sample] in config['capture_list_for_mutationBurden_calc']:
             capture_kit[sample] = config['sample_captures'][sample]
-            TARGET     +=[subject+"/"+TIME+"/"+sample+"/calls/"+sample+".MuTect.mutationburden.txt"]
-            TARGET     +=[subject+"/"+TIME+"/"+sample+"/calls/"+sample+".strelka.snvs.mutationburden.txt"]
-            TARGET     +=[subject+"/"+TIME+"/"+sample+"/calls/"+sample+".strelka.indels.mutationburden.txt"]
+            TARGET     +=[subject+"/"+TIME+"/"+sample+"/qc/"+sample+".MuTect.mutationburden.txt"]
+            TARGET     +=[subject+"/"+TIME+"/"+sample+"/qc/"+sample+".strelka.snvs.mutationburden.txt"]
+            TARGET     +=[subject+"/"+TIME+"/"+sample+"/qc/"+sample+".strelka.indels.mutationburden.txt"]
 
 rule MutationBurden:
         input:
