@@ -24,7 +24,8 @@ while(<INTERVAL>) {
 	my @int = split /\t/;
 	$total_bp += $int[2] - $int[1];
 }
-print "Total bases in $intervals bed file\t$total_bp\n";
+#print "Total bases in $intervals bed file\t$total_bp\n";
+print "Total bases\t$total_bp\n";
 
 open(IN, $ann_var) or die "Could not open $ann_var: $!\n";
 my $header = <IN>;

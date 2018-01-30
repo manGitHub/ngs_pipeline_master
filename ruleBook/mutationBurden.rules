@@ -22,7 +22,7 @@ rule MutationBurden:
                 mutationburden = NGS_PIPELINE + "/scripts/mutationBurden.pl"
         output:
                 txt="{subject}/{TIME}/{sample}/calls/{base}.annotatedFull.txt",
-                txt2="{subject}/{TIME}/{sample}/calls/{base}.mutationburden.txt"
+                txt2="{subject}/{TIME}/{sample}/qc/{base}.mutationburden.txt"
         version: "1.0"
         params:
                 rulename   = "mutationBurden",
