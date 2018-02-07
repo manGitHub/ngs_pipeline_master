@@ -12,6 +12,10 @@ local $SIG{__WARN__} = sub {
 #system("awk 'BEGIN {FS="\t"} $(NF-8)>=20 && $(NF-3)>=20 && $(NF)>=0.1 {print $1, $2, $3, $(NF-10), $(NF-9), $(NF-8), $(NF-5), $(NF-4), $(NF-3), $NF}' $ARGV[0]");
 #awk 'BEGIN {FS="\t"} $200>=20 && $205>=20 && $208>=0.1 {print $1, $2, $3, $198, $199, $200, $203, $204, $205, $208}' NCI0338_T1D_E.MuTect.annotated.txt | wc -l
 
+my $INDEX_NCOV=200;
+my $INDEX_TCOV=205;
+my $INDEX_VAF=208;
+
 my($ann_var, $intervals, $tcov, $ncov, $vaf) = @ARGV;
 my $fname = basename("$ann_var");
 $fname =~ s/\..*$//;
@@ -32,7 +36,7 @@ my $header = <IN>;
 my $count = 0;
 while(<IN>) {
 	my @fields = split /\t/;
-	$count++ if($fields[199] >= $ncov && $fields[204] >= $tcov && $fields[207] >= $vaf); 
+	$count++ if($fields[$INDEX_NCOV] >= $ncov && $fields[$INDEX_TCOV] >= $tcov && $fields[$INDEX_VAF] >= $vaf); 
 }
 
 print "Mutation burden\t", $count, "\n";

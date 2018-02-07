@@ -22,7 +22,7 @@
 	"annot_pcg"    : "hg19_PCG_042616.txt",
 	"annot_clinseq": "hg19_clinseq_951.txt",
 	"annot_clinvar": "hg19_clinvar_20160831.txt",
-	"annot_hgmd"   : "hg19_hgmd.2016.2.txt",
+	"annot_hgmd"   : "hg19_hgmd.2017.4.txt",
 	"annot_match"  : "hg19_MATCHTrial_2015_11.txt",
 	"annot_mcg"    : "hg19_MCG.06.24.15.txt",
 	"annot_docm"   : "hg19_DoCM.txt",

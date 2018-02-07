@@ -25,10 +25,10 @@ local $SIG{__WARN__} = sub {
 
 
 my $index_of_clinvar=57; # This does not include chr/alt, Func_RefGene==0
-my $index_of_ACMG=182; 
+my $index_of_ACMG=183; 
 my $index_of_HGMD=64;
 my $index_of_Gene=1;
-my $index_of_GrandTotal=181;
+my $index_of_GrandTotal=182;
 my $idx_anno_region=0;
 my $idx_anno_eff=3;
 if($ARGV[0] eq 'somatic'){
