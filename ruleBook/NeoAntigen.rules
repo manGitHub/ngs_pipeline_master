@@ -155,6 +155,6 @@ rule pVACseq:
 	wait
 	export LC_ALL=C
 	cat {wildcards.base}/{wildcards.TIME}/{wildcards.sample}/NeoAntigen/*/*.final.tsv |sort |uniq >{output}
-	perl {params.tool} {output} >{wildcards.base}/{wildcards.TIME}/{wildcards.sample}/NeoAntigen/{wildcards.sample}.final.txt
+	perl {params.tool} {output} |sort |uniq >{wildcards.base}/{wildcards.TIME}/{wildcards.sample}/NeoAntigen/{wildcards.sample}.final.txt
 	#######################
 	"""
