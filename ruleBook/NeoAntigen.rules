@@ -154,7 +154,7 @@ rule pVACseq:
 	pvacseq run --iedb-install-directory {params.IEDB} -e 14 --fasta-size=200 {input} {wildcards.sample} ${{allele}} {{NNalign,NetMHC,NetMHCIIpan,NetMHCcons,NetMHCpan,PickPocket,SMM,SMMPMBEC,SMMalign}} {wildcards.base}/{wildcards.TIME}/{wildcards.sample}/NeoAntigen/14 &
 	wait
 	export LC_ALL=C
-	cat {wildcards.base}/{wildcards.TIME}/{wildcards.sample}/NeoAntigen/*/*.final.tsv |sort |uniq >{output}
+	cat {wildcards.base}/{wildcards.TIME}/{wildcards.sample}/NeoAntigen/*/MHC_Class_I/*.final.tsv |sort |uniq >{output}
 	perl {params.tool} {output} |sort |uniq >{wildcards.base}/{wildcards.TIME}/{wildcards.sample}/NeoAntigen/{wildcards.sample}.final.txt
 	#######################
 	"""
