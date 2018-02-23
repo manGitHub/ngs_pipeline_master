@@ -29,6 +29,7 @@ if 'RNASeq' in config:
 			TARGET_R += [subject+"/"+TIME+"/"+sample+"/qc/"+sample+".RnaSeqMetrics.txt"]
 			TARGET_R += [subject+"/"+TIME+"/"+sample+"/qc/"+sample+".RnaSeqMetrics.pdf"]
 			TARGET_R += [subject+"/"+TIME+"/"+sample+"/qc/"+sample+".RnaSeqQC.txt"]
+			TARGET_R += [subject+"/"+TIME+"/"+sample+"/qc/"+"rnaseqc/"+"report.html"]
 			TARGET_R += [subject+"/"+TIME+"/"+sample+"/qc/"+sample+".star.gt"]
 			TARGET_R += [subject+"/"+TIME+"/"+sample+"/fusion/"+sample+".actionable.fusion.txt"]
 			TARGET_R += [subject+"/"+TIME+"/"+sample+"/calls/"+sample+".HC_RNASeq.annotated.txt"]

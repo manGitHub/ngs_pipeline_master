@@ -83,6 +83,8 @@
 				"ENS" : "/projects/Clinomics/Tools/ref/hg19/GTF/06302016_ensembl.gtf",
 				"UCSC": "/projects/Clinomics/Tools/ref/hg19/GTF/06302016_refseq.gtf"
 	},
+	"UCSC_star"		: "/projects/Clinomics/Tools/ref/hg19/GTF/ucsc.hg19_star.gtf",
+	"rRNA_interval_star"	: "/projects/Clinomics/Tools/ref/hg19/GTF/rRNA_ucsc19_star.list",
 	"RDS"			: {
 				"ENS" : "/projects/Clinomics/Tools/ref/hg19/AnnotationRDS/annotation_ENSEMBL_transcript.RDS",
 				"UCSC": "/projects/Clinomics/Tools/ref/hg19/AnnotationRDS/annotation_UCSC_transcript.RDS"

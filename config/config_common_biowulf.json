@@ -110,6 +110,8 @@
 				"ENS" : "/data/Clinomics/Ref/khanlab/GTF/06302016_ensembl.gtf",
 				"UCSC": "/data/Clinomics/Ref/khanlab/GTF/06302016_refseq.gtf"
 	},
+	"UCSC_star"		: "/data/Clinomics/Ref/khanlab/GTF/ucsc.hg19_star.gtf",
+	"rRNA_interval_star"	: "/data/Clinomics/Ref/khanlab/GTF/rRNA_ucsc19_star.list",
 	"RDS"                   : {
 				"ENS" : "/data/Clinomics/Ref/khanlab/AnnotationRDS/annotation_ENSEMBL_transcript.RDS",
 				"UCSC": "/data/Clinomics/Ref/khanlab/AnnotationRDS/annotation_UCSC_transcript.RDS"

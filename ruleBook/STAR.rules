@@ -29,7 +29,8 @@ rule STAR_TPM:
 		--outSAMtype BAM SortedByCoordinate\
 		--outFileNamePrefix {wildcards.sample} \
 		--runThreadN ${{THREADS}} \
-		--outFilterMismatchNmax 2
+		--outFilterMismatchNmax 2 \
+		--outSAMunmapped Within
 	echo "Finished Step 1"
 
 	# make splice junctions database file out of SJ.out.tab, filter out non-canonical junctions
@@ -57,12 +58,72 @@ rule STAR_TPM:
 		--outSAMtype BAM SortedByCoordinate\
 		--sjdbGTFfile {input.gtf1}\
 		--readFilesCommand zcat\
-		--outFileNamePrefix {wildcards.sample}_ucsc
+		--outFileNamePrefix {wildcards.sample}_ucsc \
+		--outSAMunmapped Within
 	mv -f {wildcards.sample}_ucscAligned.sortedByCoord.out.bam {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/{wildcards.sample}.star_UCSC.bam
 	echo "Finished Step 4"
 	samtools index {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/{wildcards.sample}.star_UCSC.bam
 	#######################
 	"""
+
+###################
+# Picard_bam
+###################
+rule Picard_bam:
+	input:
+		bam="{base}/{TIME}/{sample}/{sample}.star_UCSC.bam",
+		bai="{base}/{TIME}/{sample}/{sample}.star_UCSC.bam.bai"
+	output:
+		temp("{base}/{TIME}/{sample}/{sample}.ucsc.star.bam"),
+		temp("{base}/{TIME}/{sample}/{sample}.ucsc.star.bam.bai")
+	version: config["picard"]
+	params:	
+		rulename = "Picard_bam",
+		samtools = config['samtools'],
+		batch     = config[config['host']]['job_STAR'],
+		home	  = WORK_DIR,
+	shell: """
+	###########################
+	module load picard/{version}
+	java -Xmx${{MEM}}g -Djava.io.tmpdir=${{LOCAL}} -jar $PICARD_JAR AddOrReplaceReadGroups\
+	VALIDATION_STRINGENCY=SILENT\
+	INPUT={input.bam}\
+	OUTPUT={params.home}/{wildcards.base}/{TIME}/{wildcards.sample}/{wildcards.sample}.ucsc.star.bam\
+	SORT_ORDER=coordinate RGLB={wildcards.sample} RGPU={wildcards.sample} RGPL=ILLUMINA RGSM={wildcards.sample} RGCN=khanlab
+	
+	module load samtools/{params.samtools}	
+	samtools index {params.home}/{wildcards.base}/{TIME}/{wildcards.sample}/{wildcards.sample}.ucsc.star.bam
+	###########################
+	"""
+
+
+##################
+# RNASeQC_star
+##################
+rule RNASeQC_star:
+	input:
+		bam="{base}/{TIME}/{sample}/{sample}.ucsc.star.dd.bam",
+		bai="{base}/{TIME}/{sample}/{sample}.ucsc.star.dd.bam.bai",
+		rna_interval=config['rRNA_interval_star'],
+		gtf=config["UCSC_star"],
+		ref=config["reference"]	,	
+	output: "{base}/{TIME}/{sample}/qc/rnaseqc/report.html"
+	version: config["rnaseqc"],
+	params:
+		rulename="RNAseQC_star",
+		R	=config['version_R'],
+		picard	=config["picard"],
+		batch	= config[config['host']]["job_STAR"],
+		home	  = WORK_DIR,
+	shell: """
+	###########################
+	module load rnaseqc/{version}
+	module load  picard/{params.picard}
+	module load R/{params.R}
+	java -Xmx${{MEM}}g  -Djava.io.tmpdir=${{LOCAL}} -jar $RNASEQCPATH/RNA-SeQC_v1.1.8.jar   -r {input.ref} -rRNA {input.rna_interval} -o {wildcards.base}/{TIME}/{wildcards.sample}/qc/rnaseqc  -s "{sample}|{input.bam}|{sample}" -t {input.gtf}	
+	###########################
+	"""	
+
 ############
 # featureCounts
 #############
