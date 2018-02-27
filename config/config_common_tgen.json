@@ -29,6 +29,7 @@
 		"ribozero"		: "/projects/Clinomics/Tools/ref/hg19/design/RefSeq.target.hg19.merged.bed",
 		"seqcapez.rms.v1"	: "/projects/Clinomics/Tools/ref/hg19/design/Nimblegen_10_EZ_HX3_capture.target.hg19.merged.bed",
 		"mayo_v5_urt"           : "/projects/Clinomics/Tools/ref/hg19/design/Agilent_S04380219_SureSelect_v5_utr_mayo.target.hg19.bed",
+		"agilent.v5"		: "/projects/Clinomics/Tools/ref/hg19/design/Agilent_SureSelect.target.v5.bed",
 		"nbl.panel"		: "/projects/Clinomics/Tools/ref/hg19/design/SeqCap_EZ_Panel_Neuro.target.hg19.merged.bed"
 	},
 	"hotspot_bed"           :{
@@ -36,6 +37,7 @@
 		"seqcapez.hu.ex.v3"	: "/projects/Clinomics/Tools/ref/hg19/hotspot/hg19_Hotspot.08.08.16_merged.bed",
 		"seqcapez.hu.ex.utr.v1"	: "/projects/Clinomics/Tools/ref/hg19/hotspot/hg19_Hotspot.08.08.16_merged.bed",
 		"mayo_v5_urt"           : "/projects/Clinomics/Tools/ref/hg19/hotspot/hg19_Hotspot.08.08.16_merged.bed",
+		"agilent.v5"		: "/projects/Clinomics/Tools/ref/hg19/hotspot/hg19_Hotspot.08.08.16_merged.bed",
 		"clin.ex.v1"		: "/projects/Clinomics/Tools/ref/hg19/hotspot/hg19_Hotspot.08.08.16_merged_clinResExome.bed",
 		"clin.snv.v1"		: "/projects/Clinomics/Tools/ref/hg19/hotspot/hg19_Hotspot.08.08.16_merged_panel_1.bed",
 		"clin.cnv.v2"		: "/projects/Clinomics/Tools/ref/hg19/hotspot/hg19_Hotspot.08.08.16_merged.bed",
