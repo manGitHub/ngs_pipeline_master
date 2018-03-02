@@ -10,7 +10,7 @@ if 'sample_references' in config:
 ############
 rule MutationalSignature:
 	input:
-		File ="{base}/{sample}.unionSomaticVars.txt",
+		File ="{base}/{sample}.unionSomaticVarsFull.txt",
 		tool   =NGS_PIPELINE + "/scripts/mutationSignature.R"
 	output: 
 		v1="{base}/{sample}.mutationalSignature.pdf"

@@ -18,7 +18,7 @@ if 'RNASeq' in config:
 		TARGET_R   +=[subject+"/"+TIME+"/qc/"+subject+".transcriptCoverage.png"]
 		for sample in config['RNASeq'][subject]:
 			TARGET_R += [subject+"/"+TIME+"/"+sample+"/"+sample+".star.final.bam"]
-			TARGET_R += [subject+"/"+TIME+"/"+sample+"/"+sample+".tophat.final.bam"]
+			#TARGET_R += [subject+"/"+TIME+"/"+sample+"/"+sample+".tophat.final.bam"]
 			TARGET_R += [subject+"/"+TIME+"/"+sample+"/fusion/tophat-fusion.txt"]
 			TARGET_R += [subject+"/"+TIME+"/"+sample+"/fusion/fusion-catcher.txt"]
 			TARGET_R += [subject+"/"+TIME+"/"+sample+"/fusion/defuse.filtered.txt"]
@@ -87,8 +87,8 @@ rule TOPHAT:
 		#R1="{base}/{TIME}/FQ/{sample}_R1.fastq.gz",
 		#R2="{base}/{TIME}/FQ/{sample}_R2.fastq.gz", 
 	output:
-		"{base}/{TIME}/{sample}/tophat_{sample}/accepted_hits.bam",
-		"{base}/{TIME}/{sample}/tophat_{sample}/accepted_hits.bam.bai"
+		temp("{base}/{TIME}/{sample}/tophat_{sample}/accepted_hits.bam"),
+		temp("{base}/{TIME}/{sample}/tophat_{sample}/accepted_hits.bam.bai")
 	version: config["tophat"]
 	params:
 		rulename  = "tophat",
@@ -112,8 +112,8 @@ rule TOPHAT_LINK:
 		bam="{base}/{TIME}/{sample}/tophat_{sample}/accepted_hits.bam",
 		bai="{base}/{TIME}/{sample}/tophat_{sample}/accepted_hits.bam.bai",
 	output:
-		bam="{base}/{TIME}/{sample}/{sample}.tophat.final.bam",
-		bai="{base}/{TIME}/{sample}/{sample}.tophat.final.bam.bai"
+		bam=temp("{base}/{TIME}/{sample}/{sample}.tophat.final.bam"),
+		bai=temp("{base}/{TIME}/{sample}/{sample}.tophat.final.bam.bai")
 	params:
 		rulename  = "tophat_link",
 		batch     = config[config['host']]["job_default"]

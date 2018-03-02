@@ -4,13 +4,15 @@ UNION_SOM_MUT={}
 if 'sample_references' in config:
 	for sample in config['sample_references'].keys():
 		subject=SAMPLE_TO_SUBJECT[sample]
-		local =[(subject+"/"+TIME+"/"+sample+"/calls/"+sample+".strelka.snvs.annotated.txt"),
-		        (subject+"/"+TIME+"/"+sample+"/calls/"+sample+".strelka.indels.annotated.txt"),
-	        	(subject+"/"+TIME+"/"+sample+"/calls/"+sample+".MuTect.annotated.txt")]
-		if sample in config['sample_RNASeq'].keys():
-			local = [w.replace('annotated','annotated.expressed') for w in local]
+		## use Full annotated files, same as in Mutation Burden
+		local =[(subject+"/"+TIME+"/"+sample+"/calls/"+sample+".strelka.snvs.annotatedFull.txt"),
+		        (subject+"/"+TIME+"/"+sample+"/calls/"+sample+".strelka.indels.annotatedFull.txt"),
+	        	(subject+"/"+TIME+"/"+sample+"/calls/"+sample+".MuTect.annotatedFull.txt")]
+		## remove expressed calls
+		##if sample in config['sample_RNASeq'].keys():
+		##	local = [w.replace('annotated','annotated.expressed') for w in local]
 		UNION_SOM_MUT[sample] = local
-		TARGET +=[subject+"/"+TIME+ACT_DIR+sample+".unionSomaticVars.txt"]
+		TARGET +=[subject+"/"+TIME+ACT_DIR+sample+".unionSomaticVarsFull.txt"]
 ############
 #       Union Somatic Calls
 ############
@@ -18,7 +20,7 @@ rule UnionSomaticCalls:
 	input:
 		Files=lambda wildcards: UNION_SOM_MUT[wildcards.sample]
 	output: 
-		"{base}/{sample}.unionSomaticVars.txt"
+		"{base}/{sample}.unionSomaticVarsFull.txt"
 	params:
 		rulename = "UnionSomaticCalls",
 		batch    = config[config['host']]['job_default'],
