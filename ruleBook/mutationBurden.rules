@@ -2,7 +2,7 @@
 # coding: utf-8
 
 
-#Add all annotations back to sample level files and generate Mutation burden qc metrics.
+#Generate Mutation burden qc metrics.
 
 capture_kit = {}    
 for sample in config['sample_references'].keys():
@@ -15,14 +15,11 @@ for sample in config['sample_references'].keys():
 
 rule MutationBurden:
         input:
-                txt="{subject}/{TIME}/{sample}/calls/{base}.snpEff.txt",
-                ref="{subject}/{TIME}/annotation/{subject}.Annotations.final.txt",
+                txt="{subject}/{TIME}/{sample}/calls/{base}.annotatedFull.txt",
                 interval=lambda wildcards: config['target_intervals'][capture_kit[wildcards.sample]].replace("target.hg19.merged", "targetbp.hg19.actualmerged"),
-                convertor  = NGS_PIPELINE + "/scripts/addAnnotations2vcf.pl",
                 mutationburden = NGS_PIPELINE + "/scripts/mutationBurden.pl"
         output:
-                txt="{subject}/{TIME}/{sample}/calls/{base}.annotatedFull.txt",
-                txt2="{subject}/{TIME}/{sample}/qc/{base}.mutationburden.txt"
+                txt="{subject}/{TIME}/{sample}/qc/{base}.mutationburden.txt"
         version: "1.0"
         params:
                 rulename   = "mutationBurden",
@@ -32,8 +29,7 @@ rule MutationBurden:
                 vaf         = lambda wildcards: config['high_conf_somatic_threshold'][capture_kit[wildcards.sample]]['VAF'],
         shell: """
         #######################
-        perl {input.convertor} {input.ref}  {input.txt} > {output.txt}
-        perl {input.mutationburden} {output.txt} {input.interval} {params.tumor_cov} {params.normal_cov} {params.vaf} > {output.txt2} 
+        perl {input.mutationburden} {input.txt} {input.interval} {params.tumor_cov} {params.normal_cov} {params.vaf} > {output.txt} 
         #######################
         """
 

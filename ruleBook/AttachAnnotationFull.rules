@@ -1,0 +1,22 @@
+# vim: syntax=python tabstop=4 expandtab
+# coding: utf-8
+
+#Add Annotation back to sample level file. This rule creates fully annotated unfiltered list of variants. 
+
+rule AttachAnnotationFull:
+        input:
+            txt="{subject}/{TIME}/{base1}/calls/{base}.snpEff.txt",
+            ref="{subject}/{TIME}/annotation/{subject}.Annotations.final.txt",
+            convertor  = NGS_PIPELINE + "/scripts/addAnnotations2vcf.pl"
+        output:
+            txt="{subject}/{TIME}/{base1}/calls/{base}.annotatedFull.txt"
+        version: "1.0"
+        params:
+            rulename   = "addFull",
+            batch      = config[config['host']]["job_addbackann"],
+        shell: """
+        #######################
+        perl {input.convertor} {input.ref}  {input.txt} >{output.txt}
+        #######################
+        """
+

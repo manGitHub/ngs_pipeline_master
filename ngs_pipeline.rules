@@ -148,7 +148,7 @@ TARGET     += ["{subject}/{TIME}/{sample}/qc/{sample}.bwa.gt".format(TIME=TIME, 
 TARGET     += expand("{subject}/{TIME}/qc/{subject}.genotyping.txt", TIME=TIME, subject=PATIENTS)
 TARGET     += expand("{subject}/{TIME}/annotation/AnnotationInput.coding.rare.txt", TIME=TIME, subject=PATIENTS)
 TARGET     += expand("{subject}/{TIME}/annotation/{subject}.Annotations.coding.rare.txt", TIME=TIME, subject=PATIENTS)
-TARGET     += expand("{subject}/{TIME}/qc/{subject}.config.txt", TIME=TIME, subject=PATIENTS)
+TARGET     += expand("{subject}/{TIME}/qc/{subject}.config.{NOW}.txt", TIME=TIME, subject=PATIENTS, NOW=NOW)
 TARGET     += expand("{subject}/{TIME}/igv/session_{subject}.xml", TIME=TIME, subject=PATIENTS)
 
 if len(config['sample_references']) > 0:
@@ -279,6 +279,7 @@ include: NGS_PIPELINE +"/ruleBook/cnvkit.rules"
 include: NGS_PIPELINE +"/ruleBook/MethlySeq.rules"
 include: NGS_PIPELINE +"/ruleBook/HotSpot_Pileup.rules"
 include: NGS_PIPELINE +"/ruleBook/mutationBurden.rules"
+include: NGS_PIPELINE +"/ruleBook/AttachAnnotationFull.rules"
 
 ###########################################################################
 # we have to do it this way as some samples may not have rna or tumor     #
@@ -357,7 +358,7 @@ rule Khanlab_Pipeline:
 # Print Config to a file
 ############
 rule makeConfig:
-	output:	"{subject}/{TIME}/qc/{subject}.config.txt" 
+	output:	"{subject}/{TIME}/qc/{subject}.config." + NOW + ".txt" 
 	params:
 		rulename = "configPrint",
 		batch    = config[config['host']]["job_default"],
@@ -916,7 +917,7 @@ rule AttachAnnotation:
 		ref="{subject}/{TIME}/annotation/{subject}.Annotations.coding.rare.txt",
 		convertor  = NGS_PIPELINE + "/scripts/addAnnotations2vcf.pl"
 	output:
-		txt="{subject}/{TIME}/{base1}/calls/{base}.annotated.txt"
+		txt="{subject}/{TIME}/{base1}/calls/{base}.annotated.txt",
 	version: "1.0"
 	params:
 		rulename   = "add",

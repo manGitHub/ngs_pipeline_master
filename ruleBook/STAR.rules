@@ -120,7 +120,7 @@ rule RNASeQC_star:
 	module load rnaseqc/{version}
 	module load  picard/{params.picard}
 	module load R/{params.R}
-	java -Xmx${{MEM}}g  -Djava.io.tmpdir=${{LOCAL}} -jar $RNASEQCPATH/RNA-SeQC_v1.1.8.jar   -r {input.ref} -rRNA {input.rna_interval} -o {wildcards.base}/{TIME}/{wildcards.sample}/qc/rnaseqc  -s "{sample}|{input.bam}|{sample}" -t {input.gtf}	
+	java -Xmx${{MEM}}g  -Djava.io.tmpdir=${{LOCAL}} -jar $RNASEQCPATH/RNA-SeQC_v1.1.8.jar   -r {input.ref} -rRNA {input.rna_interval} -o {wildcards.base}/{TIME}/{wildcards.sample}/qc/rnaseqc  -s "{wildcards.sample}|{input.bam}|{wildcards.sample}" -t {input.gtf}	
 	###########################
 	"""	
 
