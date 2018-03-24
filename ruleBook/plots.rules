@@ -8,6 +8,23 @@ if 'subject' in config:
 			if config['sample_captures'][library] not in config['Panel_List']:
 				# any output which is desired on all libraries but Panel goes here, the list of panel captures should be maintained in the Panel_List in config file
 				TARGET    += [subject+"/"+TIME+"/qc/"+subject+".circos.png"]
+
+LOH_Circos = {}
+for subject in config['subject'].keys():
+    LOH_files = []
+    for s in config['subject'][subject]:
+        if config['sample_captures'][s] not in config['Panel_List']:
+            LOH_files.append(s)
+    LOH_Circos[subject] = ["{subject}/{TIME}/{sample}/qc/{sample}.bwa.loh".format(TIME=TIME, subject=SAMPLE_TO_SUBJECT[s], sample=lib) for lib in LOH_files]
+if 'RNASeq' in config:
+    for subject in config['RNASeq'].keys():
+        if subject in config['subject'].keys():
+            LOH_Circos[subject] += ["{subject}/{TIME}/{sample}/qc/{sample}.star.loh".format(TIME=TIME, subject=SUB2RNA[s], sample=s) for s in config['RNASeq'][subject]]
+        else:
+            LOH_Circos[subject] = []
+            LOH_Circos[subject] += ["{subject}/{TIME}/{sample}/qc/{sample}.star.loh".format(TIME=TIME, subject=SUB2RNA[s], sample=s) for s in config['RNASeq'][subject]]
+
+
 ############
 # CoveragePlot
 ############
@@ -34,7 +51,7 @@ rule CoveragePlot:
 ############
 rule Circos:
 	input:
-		lohFiles=lambda wildcards: SUB_LOH[wildcards.subject],
+		lohFiles=lambda wildcards: LOH_Circos[wildcards.subject],
 		circos =NGS_PIPELINE + "/scripts/circos.R"
 	output:
 		"{subject}/{TIME}/qc/{subject}.circos.png",

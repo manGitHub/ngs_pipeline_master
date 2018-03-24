@@ -8,14 +8,6 @@ FILE=str_trim(args[2])
 SAM=str_trim(args[3])
 
 files <- list.files(path = DIR, pattern=".loh$")
-for (i in 1:length(files)){
-	if (length(files) >1){
-		if (length(grep("_P.*.bwa.loh",files[i]))>0){
-			files <- files[-grep("_P.*.bwa.loh",files,perl=TRUE,value = FALSE)]
-		}
-	}
-}
-
 
 labs <- paste("", gsub("Sample_|\\.bwa|\\.star|\\.loh", "", files, perl=TRUE), sep="")
 

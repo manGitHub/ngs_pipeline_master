@@ -75,6 +75,7 @@ else{
 }
 my $NOW=`echo \$(date +"%Y%m%d_%H%M%S")`;
 chomp $NOW;
+my $jobid;
 if (`hostname` =~ /cn/ or `hostname` =~ /biowulf.nih.gov/){
 	if ($dryrun){
 		my $cmd = "(
@@ -97,7 +98,7 @@ if (`hostname` =~ /cn/ or `hostname` =~ /biowulf.nih.gov/){
 	else{
 		`mkdir -p "$workDir/log/"`;
 		`chmod g+rw "$workDir/log"`;
-		`sbatch -e $workDir/log/ngs-pipeline.%j.e -o $workDir/log/ngs-pipeline.%j.o --export=time=$mode,ngs=$NGS_PIPELINE,dataDir=$dataDir,workDir=$workDir,sheet=$sheet --cpus-per-task=1 --partition=ccr,norm --time=10-00:00:00 $NGS_PIPELINE/submit_snakemake.sh`;
+		$jobid = `sbatch -e $workDir/log/ngs-pipeline.%j.e -o $workDir/log/ngs-pipeline.%j.o --export=time=$mode,ngs=$NGS_PIPELINE,dataDir=$dataDir,workDir=$workDir,sheet=$sheet --cpus-per-task=1 --partition=ccr,norm --time=10-00:00:00 $NGS_PIPELINE/submit_snakemake.sh`;
 	}
 }
 elsif(`hostname` =~ /tghighmem/ or `hostname` =~ /tgcompute/ or `hostname` =~ /login01/){
@@ -122,7 +123,7 @@ elsif(`hostname` =~ /tghighmem/ or `hostname` =~ /tgcompute/ or `hostname` =~ /l
 	else{
 		`mkdir -p "$workDir/log/"`;
 		`chmod g+rw "$workDir/log/"`;
-		`sbatchT -e $workDir/log/ngs-pipeline.%j.e -o $workDir/log/ngs-pipeline.%j.o --export=time=$mode,ngs=$NGS_PIPELINE,dataDir=$dataDir,workDir=$workDir,sheet=$sheet --cpus-per-task=1 --partition=batch --time=10-00:00:00 $NGS_PIPELINE/submit_snakemake.sh`;
+		$jobid = `sbatchT -e $workDir/log/ngs-pipeline.%j.e -o $workDir/log/ngs-pipeline.%j.o --export=time=$mode,ngs=$NGS_PIPELINE,dataDir=$dataDir,workDir=$workDir,sheet=$sheet --cpus-per-task=1 --partition=batch --time=10-00:00:00 $NGS_PIPELINE/submit_snakemake.sh`;
 	}
 }
 else{
@@ -130,6 +131,10 @@ else{
 	print STDERR "Please change configuration files as well as Snakemake file to accomodate the same\n";
 	die;
 }
+
+chomp $jobid;
+print "sample_sheet:$sheet\npipeline:$NGS_PIPELINE\n" if $jobid;
+print "jobid:$jobid\n" if $jobid;
 =head1 SYNOPSIS
 
  launch -mode d -datadir /projects/Clinomics/DATA/ -workdir /projects/Clinomics/Test_Run2 -s /projects/Clinomics/Test_Run2/SampleSheets/samplesheet.json
