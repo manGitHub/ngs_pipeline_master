@@ -33,7 +33,11 @@ if [[ $sheet == 'samplesheet.json' ]]; then
 else
 	SAM_CONFIG=$sheet
 fi
-NOW=$(date +"%Y%m%d_%H%M%S")
+
+sheet_name=`basename $SAM_CONFIG .json`
+export SAMPLESHEET="$sheet_name"
+#NOW=$(date +"%Y%m%d_%H%M%S")
+NOW=$runTime
 #export TIME=$(date +"%Y%m%d%H")
 export TMP="$NOW"
 if [[ `hostname` =~ "cn" ]] || [ `hostname` == 'biowulf.nih.gov' ]; then
@@ -58,27 +62,27 @@ fi
 export ACT_DIR="/Actionable/"
 SNAKEFILE=$NGS_PIPELINE/ngs_pipeline.rules
 
-cmd="--directory $WORK_DIR --snakefile $SNAKEFILE --configfile $SAM_CONFIG --jobscript $NGS_PIPELINE/scripts/jobscript.sh --jobname {params.rulename}.{jobid} --nolock  --ri -k -p -T -r -j 3000 --resources DeFuse=25 --resources SIFT=8 --stats ngs_pipeline_${NOW}.stats -R RNASeq "
+cmd="--directory $WORK_DIR --snakefile $SNAKEFILE --configfile $SAM_CONFIG --jobscript $NGS_PIPELINE/scripts/jobscript.sh --jobname {params.rulename}.{jobid} --nolock  --ri -k -p -T -r -j 3000 --resources DeFuse=25 --resources SIFT=8 --stats ngs_pipeline_${sheet_name}_${NOW}.stats -R RNASeq "
 #cmd="--directory $WORK_DIR --snakefile $SNAKEFILE --configfile $SAM_CONFIG --jobscript $NGS_PIPELINE/scripts/jobscript.sh --jobname {params.rulename}.{jobid} --nolock  --ri -k -p -T -r -j 3000 --resources DeFuse=25 --resources SIFT=8 --stats ngs_pipeline_${NOW}.stats -R makeConfig RNASeq "
 umask 022
 if [ $HOST   == 'biowulf.nih.gov' ]; then
 	echo "Host identified as $HOST"
 	echo "Variables are $cmd"
-	snakemake $cmd --cluster "sbatch -o log/{params.rulename}.%j.o -e log/{params.rulename}.%j.e {params.batch}" >& ngs_pipeline_${NOW}.log
+	snakemake $cmd --cluster "sbatch -o log/{params.rulename}.%j.o -e log/{params.rulename}.%j.e {params.batch}" >& ngs_pipeline_${sheet_name}_${NOW}.log
 elif [ $HOST == 'login01' ]; then
 	echo "Host identified as $HOST"
 	echo "Variables are $cmd"
-	snakemake $cmd --cluster "sbatchT -o log/{params.rulename}.%j.o -e log/{params.rulename}.%j.e {params.batch}" >& ngs_pipeline_${NOW}.log
-	rm -rf /projects/scratch/ngs_pipeline_${NOW}_*
+	snakemake $cmd --cluster "sbatchT -o log/{params.rulename}.%j.o -e log/{params.rulename}.%j.e {params.batch}" >& ngs_pipeline_${sheet_name}_${NOW}.log
+	rm -rf /projects/scratch/ngs_pipeline_${sheet_name}_${NOW}_*
 fi
 
-if [ -f ngs_pipeline_${NOW}.stats ]; then
-	python $NGS_PIPELINE/scripts/stats2Table.py ngs_pipeline_${NOW}.stats >ngs_pipeline_${NOW}.stats.txt
+if [ -f ngs_pipeline_${sheet_name}_${NOW}.stats ]; then
+	python $NGS_PIPELINE/scripts/stats2Table.py ngs_pipeline_${sheet_name}_${NOW}.stats >ngs_pipeline_${sheet_name}_${NOW}.stats.txt
 fi
 
 
-if [ -s ngs_pipeline_${NOW}.stats.txt ]; then
+if [ -s ngs_pipeline_${sheet_name}_${NOW}.stats.txt ]; then
 	print "No job took significant time"
 else
-	rm -rf ngs_pipeline_${NOW}.stats.txt	
+	rm -rf ngs_pipeline_${sheet_name}_${NOW}.stats.txt	
 fi

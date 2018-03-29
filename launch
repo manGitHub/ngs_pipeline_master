@@ -4,6 +4,8 @@ use strict;
 use Getopt::Long;
 use Pod::Usage;
 use Time::Piece;
+use File::Basename;
+
 my $NGS_PIPELINE;
 my $mode = 'd';
 my $time='20160415';
@@ -76,6 +78,7 @@ else{
 my $NOW=`echo \$(date +"%Y%m%d_%H%M%S")`;
 chomp $NOW;
 my $jobid;
+my $sheet_name = basename($sheet, ".json");
 if (`hostname` =~ /cn/ or `hostname` =~ /biowulf.nih.gov/){
 	if ($dryrun){
 		my $cmd = "(
@@ -87,10 +90,11 @@ if (`hostname` =~ /cn/ or `hostname` =~ /biowulf.nih.gov/){
 		export DATA_DIR=$dataDir
 		export ACT_DIR=\"/Actionable/\"
 		export HOST=\"biowulf.nih.gov\"
+		export SAMPLESHEET=$sheet_name
 		SNAKEFILE=$NGS_PIPELINE/ngs_pipeline.rules
 		SAM_CONFIG=$sheet
 		snakemake --directory \$WORK_DIR --snakefile \$SNAKEFILE --configfile \$SAM_CONFIG --dryrun -p -r --ri -R RNASeq
-		rm -rf $workDir/ngs_pipeline_$NOW.csv
+		rm -rf $workDir/ngs_pipeline_${sheet_name}_$NOW.csv
 		)";
 		print "$cmd\n";
 		exec "$cmd";
@@ -98,7 +102,7 @@ if (`hostname` =~ /cn/ or `hostname` =~ /biowulf.nih.gov/){
 	else{
 		`mkdir -p "$workDir/log/"`;
 		`chmod g+rw "$workDir/log"`;
-		$jobid = `sbatch -e $workDir/log/ngs-pipeline.%j.e -o $workDir/log/ngs-pipeline.%j.o --export=time=$mode,ngs=$NGS_PIPELINE,dataDir=$dataDir,workDir=$workDir,sheet=$sheet --cpus-per-task=1 --partition=ccr,norm --time=10-00:00:00 $NGS_PIPELINE/submit_snakemake.sh`;
+		$jobid = `sbatch -e $workDir/log/ngs-pipeline.%j.e -o $workDir/log/ngs-pipeline.%j.o --export=time=$mode,ngs=$NGS_PIPELINE,dataDir=$dataDir,workDir=$workDir,sheet=$sheet,runTime=$NOW --cpus-per-task=1 --partition=ccr,norm --time=10-00:00:00 $NGS_PIPELINE/submit_snakemake.sh`;
 	}
 }
 elsif(`hostname` =~ /tghighmem/ or `hostname` =~ /tgcompute/ or `hostname` =~ /login01/){
@@ -112,10 +116,11 @@ elsif(`hostname` =~ /tghighmem/ or `hostname` =~ /tgcompute/ or `hostname` =~ /l
                 export DATA_DIR=$dataDir
                 export ACT_DIR=\"/Actionable/\"
                 export HOST=\"login01\"
+		export SAMPLESHEET=$sheet_name
                 SNAKEFILE=$NGS_PIPELINE/ngs_pipeline.rules
                 SAM_CONFIG=$sheet
                 snakemake --directory \$WORK_DIR --snakefile \$SNAKEFILE --configfile \$SAM_CONFIG --dryrun -p -r --ri -R RNASeq
-		rm -rf $workDir/ngs_pipeline_$NOW.csv
+		rm -rf $workDir/ngs_pipeline_${sheet_name}_$NOW.csv
 		)";
 		print "$cmd\n";
 		exec "$cmd";	
@@ -123,7 +128,7 @@ elsif(`hostname` =~ /tghighmem/ or `hostname` =~ /tgcompute/ or `hostname` =~ /l
 	else{
 		`mkdir -p "$workDir/log/"`;
 		`chmod g+rw "$workDir/log/"`;
-		$jobid = `sbatchT -e $workDir/log/ngs-pipeline.%j.e -o $workDir/log/ngs-pipeline.%j.o --export=time=$mode,ngs=$NGS_PIPELINE,dataDir=$dataDir,workDir=$workDir,sheet=$sheet --cpus-per-task=1 --partition=batch --time=10-00:00:00 $NGS_PIPELINE/submit_snakemake.sh`;
+		$jobid = `sbatchT -e $workDir/log/ngs-pipeline.%j.e -o $workDir/log/ngs-pipeline.%j.o --export=time=$mode,ngs=$NGS_PIPELINE,dataDir=$dataDir,workDir=$workDir,sheet=$sheet,runTime=$NOW --cpus-per-task=1 --partition=batch --time=10-00:00:00 $NGS_PIPELINE/submit_snakemake.sh`;
 	}
 }
 else{
@@ -132,9 +137,10 @@ else{
 	die;
 }
 
+
 chomp $jobid;
-print "sample_sheet:$sheet\npipeline:$NGS_PIPELINE\n" if $jobid;
-print "jobid:$jobid\n" if $jobid;
+print "jobid:$jobid\tsample_sheet:$sheet\tpipeline:$NGS_PIPELINE\tlog:ngs_pipeline_${sheet_name}_$NOW.log\n" if $jobid;
+
 =head1 SYNOPSIS
 
  launch -mode d -datadir /projects/Clinomics/DATA/ -workdir /projects/Clinomics/Test_Run2 -s /projects/Clinomics/Test_Run2/SampleSheets/samplesheet.json

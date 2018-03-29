@@ -15,6 +15,7 @@ ACT_DIR=os.environ['ACT_DIR']
 HOST=os.environ['HOST']
 TIME=os.environ['TIME']
 NOW=os.environ['TMP']
+SAMPLESHEET=os.environ['SAMPLESHEET']
 configfile: NGS_PIPELINE +"/config/config_annotation.json"
 configfile: NGS_PIPELINE +"/config/config_common.json"
 configfile: NGS_PIPELINE +"/config/config_cluster.json"
@@ -50,8 +51,8 @@ elif [ {HOST} == 'login01' ]
 		module load slurm
 		module load gcc/4.8.1
 		MEM=`scontrol show job ${{SLURM_JOB_ID}} | grep "MinMemoryNode"| perl -n -e'/MinMemoryNode=(\d*)G/ && print $1'`
-		mkdir -p /projects/scratch/ngs_pipeline_{NOW}_${{SLURM_JOB_ID}}/
-		LOCAL="/projects/scratch/ngs_pipeline_{NOW}_${{SLURM_JOB_ID}}/"
+		mkdir -p /projects/scratch/ngs_pipeline_{SAMPLESHEET}_{NOW}_${{SLURM_JOB_ID}}/
+		LOCAL="/projects/scratch/ngs_pipeline_{SAMPLESHEET}_{NOW}_${{SLURM_JOB_ID}}/"
 		THREADS=`scontrol show job ${{SLURM_JOB_ID}} | grep  "MinCPUsNode" | perl -n -e'/MinCPUsNode=(\d*)/ && print $1'`
 fi
 """)
@@ -309,7 +310,7 @@ onerror:
 	shell("ssh {HOST} \"echo 'ngs-pipeline version {VERSION} failed on {PATIENTS}. Error occured on {HOST}. Working Dir:  {WORK_DIR}' |mutt -s 'Khanlab ngs-pipeline Status' `whoami`@mail.nih.gov  {MAIL} \"")
 	shell("find .snakemake/ ! -readable -prune -group $USER -exec chgrp -f {GROUP} {{}} \;")
 onstart:
-	f = open('ngs_pipeline_%s.csv' % NOW , 'w')
+	f = open('ngs_pipeline_%s_%s.csv' % (SAMPLESHEET, NOW) , 'w')
 	print ('#Patient','Diagnosis','CaseID',sep='\t', end='\n',file=f)
 	for subject in sorted(PATIENTS):
 		diagnosis =config['Diagnosis'][SUBJECT_TO_SAMPLE[subject][0]]
@@ -325,7 +326,7 @@ onsuccess:
 rule Khanlab_Pipeline:
 	input:
 		TARGET,
-		expand ("ngs_pipeline_{NOW}.rnaseq.done", NOW=NOW)
+		expand ("ngs_pipeline_{SAMPLESHEET}_{NOW}.rnaseq.done", NOW=NOW, SAMPLESHEET=SAMPLESHEET)
 	version: config["pipeline_version"]
 	wildcard_constraints:
 		NOW="\w+"
@@ -339,7 +340,7 @@ rule Khanlab_Pipeline:
 		subs     = PATIENTS
 	shell: """
 	#######################
-	rm -rf ngs_pipeline_{NOW}.rnaseq.done
+	rm -rf ngs_pipeline_{SAMPLESHEET}_{NOW}.rnaseq.done
 	find {PATIENTS} log -group $USER -exec chgrp -f {params.group} {{}} \;
 	find {PATIENTS} log \( -type f -user $USER -exec chmod g+rw {{}} \; \) , \( -type d -user $USER -exec chmod g+rwx {{}} \; \)
 	export LC_ALL=C
@@ -350,8 +351,8 @@ rule Khanlab_Pipeline:
 		chmod g+rw {WORK_DIR}/${{sub}}/{TIME}/successful.txt 	
 		chgrp {params.group} {WORK_DIR}/${{sub}}/{TIME}/successful.txt
         done
-	ssh {params.host} "{params.mail} --location {WORK_DIR} --host {params.host} --head --version {version} {WORK_DIR}/ngs_pipeline_{NOW}.csv |mutt -e \\\"my_hdr Content-Type: text/html\\\" -s 'Khanlab ngs-pipeline Status' `whoami`@mail.nih.gov {params.email}"
-	rm -rf {WORK_DIR}/ngs_pipeline_{NOW}.csv
+	ssh {params.host} "{params.mail} --location {WORK_DIR} --host {params.host} --head --version {version} {WORK_DIR}/ngs_pipeline_{SAMPLESHEET}_{NOW}.csv |mutt -e \\\"my_hdr Content-Type: text/html\\\" -s 'Khanlab ngs-pipeline Status' `whoami`@mail.nih.gov {params.email}"
+	rm -rf {WORK_DIR}/ngs_pipeline_{SAMPLESHEET}_{NOW}.csv
 	#######################
 	"""
 ############

@@ -67,7 +67,7 @@ rule RNASeq:
 	input:
 		TARGET_R,
 	output:
-		expand("ngs_pipeline_{NOW}.rnaseq.done", NOW=NOW)
+		expand("ngs_pipeline_{SAMPLESHEET}_{NOW}.rnaseq.done", NOW=NOW, SAMPLESHEET=SAMPLESHEET)
 	wildcard_constraints:
                 NOW="\w+"	
 	params:
