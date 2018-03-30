@@ -139,7 +139,7 @@ else{
 
 
 chomp $jobid;
-print "jobid:$jobid\tsample_sheet:$sheet\tpipeline:$NGS_PIPELINE\tlog:ngs_pipeline_${sheet_name}_$NOW.log\n" if $jobid;
+print "$jobid\t$sheet\t$NGS_PIPELINE\t$workDir/ngs_pipeline_${sheet_name}_$NOW.log\n" if $jobid;
 
 =head1 SYNOPSIS
 
