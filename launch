@@ -102,7 +102,7 @@ if (`hostname` =~ /cn/ or `hostname` =~ /biowulf.nih.gov/){
 	else{
 		`mkdir -p "$workDir/log/"`;
 		`chmod g+rw "$workDir/log"`;
-		$jobid = `sbatch -e $workDir/log/ngs-pipeline.%j.e -o $workDir/log/ngs-pipeline.%j.o --export=time=$mode,ngs=$NGS_PIPELINE,dataDir=$dataDir,workDir=$workDir,sheet=$sheet,runTime=$NOW --cpus-per-task=1 --partition=ccr,norm --time=05-00:00:00 $NGS_PIPELINE/submit_snakemake.sh`;
+		$jobid = `sbatch -e $workDir/log/ngs-pipeline.%j.e -o $workDir/log/ngs-pipeline.%j.o --export=time=$mode,ngs=$NGS_PIPELINE,dataDir=$dataDir,workDir=$workDir,sheet=$sheet,runTime=$NOW --cpus-per-task=1 --partition=ccr,norm --time=03-00:00:00 $NGS_PIPELINE/submit_snakemake.sh`;
 	}
 }
 elsif(`hostname` =~ /tghighmem/ or `hostname` =~ /tgcompute/ or `hostname` =~ /login01/){
@@ -128,7 +128,7 @@ elsif(`hostname` =~ /tghighmem/ or `hostname` =~ /tgcompute/ or `hostname` =~ /l
 	else{
 		`mkdir -p "$workDir/log/"`;
 		`chmod g+rw "$workDir/log/"`;
-		$jobid = `sbatchT -e $workDir/log/ngs-pipeline.%j.e -o $workDir/log/ngs-pipeline.%j.o --export=time=$mode,ngs=$NGS_PIPELINE,dataDir=$dataDir,workDir=$workDir,sheet=$sheet,runTime=$NOW --cpus-per-task=1 --partition=batch --time=05-00:00:00 $NGS_PIPELINE/submit_snakemake.sh`;
+		$jobid = `sbatchT -e $workDir/log/ngs-pipeline.%j.e -o $workDir/log/ngs-pipeline.%j.o --export=time=$mode,ngs=$NGS_PIPELINE,dataDir=$dataDir,workDir=$workDir,sheet=$sheet,runTime=$NOW --cpus-per-task=1 --partition=batch --time=03-00:00:00 $NGS_PIPELINE/submit_snakemake.sh`;
 	}
 }
 else{
