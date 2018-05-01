@@ -9,6 +9,8 @@
 	"BowtieIndex"		: "/data/Clinomics/Ref/khanlab/Index/BowtieIndex/genome",
 	"Novo_index"		: "/data/Clinomics/Ref/khanlab/Index/novoalign/chr_all_hg19.nbx",
 	"STAR_ref"		: "/data/Clinomics/Ref/khanlab/Index/STAR_hg19_index",
+	"starwithfusion"	: "/data/Clinomics/Ref/khanlab/Index/ctat_genome_lib_STAR_STAR-Fusion/ref_genome.fa.star.idx",
+	"STAR_Fusion"		: "/data/Clinomics/Ref/khanlab/Index/ctat_genome_lib_STAR_STAR-Fusion",
 	"reference"		: "/data/Clinomics/Ref/khanlab/ucsc.hg19.fasta",
 	"HLA"			: "/data/Clinomics/Ref/khanlab/HLA/",
 	"version_R"		: "3.4.0_gcc-4.9.1",

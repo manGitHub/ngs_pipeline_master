@@ -13,7 +13,8 @@ my $library        = $ARGV[0];
 my $defuse         = $ARGV[1];
 my $tophat         = $ARGV[2];
 my $fusioncatcher  = $ARGV[3];
-my $destination    = $ARGV[4];
+my $star_fusion	   = $ARGV[4];
+my $destination    = $ARGV[5];
 print "#LeftGene\tRightGene\tChr_Left\tPosition\tChr_Right\tPosition\tSample\tTool\tSpanReadCount\n";
 ###########################################################
 ###########################################################
@@ -81,3 +82,26 @@ while(<FC>){
 }
 close FC;
 close FC_OUT;
+
+#############################################################
+unless (open(SF, "$star_fusion")){
+        print STDERR "Can not open the file $star_fusion\n";
+        exit;
+}
+unless (open(SF_OUT, ">$destination/$library.STAR-fusion.txt")){
+        print STDERR "Can not open the file $destination/$library.STAR-fusion.txt\n";
+        die $!;
+}
+while(<SF>){
+	chomp;
+	my @local =split("\t", $_);
+	if($_ =~ /#FusionName/){print SF_OUT "$_\n"; next}
+	my @l_gene =split(/\^/, $local[4]);
+	my @R_gene =split(/\^/, $local[6]);
+	my @left  = split(":", $local[5]);
+	my @right = split(":", $local[7]);
+	print "$l_gene[0]\t$R_gene[0]\t$left[0]\t$left[1]\t$right[0]\t$right[1]\t$library\tSTAR-fusion\t$local[1]\n";
+	print SF_OUT "$_\n";
+}
+close SF;
+close SF_OUT;

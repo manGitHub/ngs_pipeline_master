@@ -5,66 +5,75 @@ rule STAR_TPM:
 	input:  R=lambda wildcards: FQ[wildcards.sample],
 		R1="{subject}/{TIME}/FQ/{sample}_R1.fastq.gz",
         	R2="{subject}/{TIME}/FQ/{sample}_R2.fastq.gz",
-		ref=config["reference"],
-		gtf1=config['GTF']['UCSC'],
 	output:
 		temp("{subject}/{TIME}/{sample}/{sample}.star_UCSC.bam"),
-		temp("{subject}/{TIME}/{sample}/{sample}.star_UCSC.bam.bai")
+		temp("{subject}/{TIME}/{sample}/{sample}.star_UCSC.bam.bai"),
+		temp("{subject}/{TIME}/{sample}/{sample}_ucscAligned.toTranscriptome.out.bam"),
+		temp("{subject}/{TIME}/{sample}/{sample}_ucscChimeric.out.junction")
 	version: config["STAR"]
 	params:
 		rulename  = "STAR",
 		batch     = config[config['host']]['job_STAR_TPM'],
-		star_ref  = config['STAR_ref'],
-		awk       = NGS_PIPELINE + "/scripts/SJDB.awk",
+		star_ref  = config['starwithfusion'],
 		home      = WORK_DIR,
 	shell: """
 	#######################
 	module load STAR/{version} samtools
 	cd ${{LOCAL}}/
-	# run 1st pass
-	STAR --outTmpDir STEP1 \
+	# running two pass mapping
+	STAR 	--outTmpDir twopass\
 		--genomeDir {params.star_ref} \
-		--readFilesIn {input.R[0]} {input.R[1]} \
+                --readFilesIn {input.R[0]} {input.R[1]} \
 		--readFilesCommand zcat\
-		--outSAMtype BAM SortedByCoordinate\
-		--outFileNamePrefix {wildcards.sample} \
-		--runThreadN ${{THREADS}} \
-		--outFilterMismatchNmax 2 \
-		--outSAMunmapped Within
-	echo "Finished Step 1"
-
-	# make splice junctions database file out of SJ.out.tab, filter out non-canonical junctions
-	mkdir GenomeForPass2
-	awk -f {params.awk} {wildcards.sample}SJ.out.tab > GenomeForPass2/{wildcards.sample}.out.tab.Pass1.sjdb
-	echo "Finished Step 2"
-
-	# generate genome with junctions from the 1st pass
-	STAR --outTmpDir STEP2\
-		--genomeDir GenomeForPass2\
-		--runMode genomeGenerate\
-		--genomeSAindexNbases 8\
-		--genomeFastaFiles {input.ref}\
-		--sjdbFileChrStartEnd GenomeForPass2/{wildcards.sample}.out.tab.Pass1.sjdb\
-		--sjdbOverhang 100\
-		--runThreadN ${{THREADS}}
-	echo "Finished Step 3"
-
-	# run 2nd pass with the new genome
-	STAR --outTmpDir STEP3\
-		--genomeDir GenomeForPass2\
-		--runThreadN ${{THREADS}}\
-		--outSAMattributes All\
-		--readFilesIn {input.R[0]} {input.R[1]}\
-		--outSAMtype BAM SortedByCoordinate\
-		--sjdbGTFfile {input.gtf1}\
-		--readFilesCommand zcat\
+                --outSAMtype BAM SortedByCoordinate\
+		--twopassMode Basic \
+		--chimSegmentMin 12\
+		--chimJunctionOverhangMin 12\
+		--alignSJDBoverhangMin 10\
+		--alignMatesGapMax 100000\
+		--alignIntronMax 100000\
+		--chimSegmentReadGapMax 3\
 		--outFileNamePrefix {wildcards.sample}_ucsc \
-		--outSAMunmapped Within
+		--runThreadN ${{THREADS}} \
+		--outFilterMismatchNmax 2\
+		--outSAMunmapped Within\
+		--quantMode TranscriptomeSAM
+	echo "Finished STAR twopass mapping"
 	mv -f {wildcards.sample}_ucscAligned.sortedByCoord.out.bam {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/{wildcards.sample}.star_UCSC.bam
-	echo "Finished Step 4"
+	mv -f {wildcards.sample}_ucscAligned.toTranscriptome.out.bam {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/{wildcards.sample}_ucscAligned.toTranscriptome.out.bam
+	mv -f {wildcards.sample}_ucscChimeric.out.junction {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/{wildcards.sample}_ucscChimeric.out.junction
 	samtools index {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/{wildcards.sample}.star_UCSC.bam
 	#######################
 	"""
+
+##################
+# STAR_Fusion
+##################
+rule STAR_Fusion:
+	input:
+		Junction="{subject}/{TIME}/{sample}/{sample}_ucscChimeric.out.junction",
+	output:
+		"{subject}/{TIME}/{sample}/STAR-Fusion_results/star-fusion.fusion_predictions.tsv",
+		"{subject}/{TIME}/{sample}/fusion/STAR-fusion.txt",
+	version: config["STAR-Fusion"],
+	params:
+		rulename   = "STAR_Fusion",
+		samtools   = config['samtools'],
+		batch      = config[config['host']]['job_STAR_TPM'],
+		SF_ref	   = config['STAR_Fusion'],
+		home	  = WORK_DIR,
+	shell: """
+	#########################
+	module load STAR-Fusion/{version}
+	module load samtools/{params.samtools}
+	module load perl
+	STAR-Fusion --genome_lib_dir {params.SF_ref} -J {input.Junction} --CPU ${{THREADS}} --output_dir {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/STAR-Fusion_results
+	
+	cp  {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/STAR-Fusion_results/star-fusion.fusion_predictions.tsv {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/fusion/STAR-fusion.txt
+
+	###########################
+        """
+
 
 ###################
 # Picard_bam

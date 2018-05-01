@@ -22,6 +22,7 @@ if 'RNASeq' in config:
 			TARGET_R += [subject+"/"+TIME+"/"+sample+"/fusion/tophat-fusion.txt"]
 			TARGET_R += [subject+"/"+TIME+"/"+sample+"/fusion/fusion-catcher.txt"]
 			TARGET_R += [subject+"/"+TIME+"/"+sample+"/fusion/defuse.filtered.txt"]
+			TARGET_R += [subject+"/"+TIME+"/"+sample+"/fusion/STAR-fusion.txt"]
 			TARGET_R += [subject+"/"+TIME+"/"+sample+"/qc/fastqc/"+sample+"_R2_fastqc.html"]
 			TARGET_R += [subject+"/"+TIME+"/qc/"+subject+".circos.png"]
 			TARGET_R += [subject+"/"+TIME+"/"+sample+"/qc/"+sample+".star.flagstat.txt"]
@@ -343,7 +344,7 @@ rule STAR:
 	output:
 		temp("{base}/{TIME}/{sample}/{sample}.star.bam"),
 		temp("{base}/{TIME}/{sample}/{sample}.star.bam.bai")
-	version: config["STAR"]
+	version: config["STAR_old"]
 	params:
 		rulename  = "STAR",
 		samtools  = config['samtools'],
@@ -455,6 +456,7 @@ rule Sub_Fusion:
 		tophat="{subject}/{TIME}/{sample}/fusion/tophat-fusion.txt",
 		fc="{subject}/{TIME}/{sample}/fusion/fusion-catcher.txt",
 		defuse="{subject}/{TIME}/{sample}/fusion/defuse.filtered.txt",
+		SF="{subject}/{TIME}/{sample}/fusion/STAR-fusion.txt",
 		convertor = NGS_PIPELINE + "/scripts/" + config['Actionable_fusion'],
 	output:
 		"{subject}/{TIME}/{sample}/fusion/{sample}.actionable.fusion.txt"
@@ -464,7 +466,7 @@ rule Sub_Fusion:
 	shell: """
 	#######################
 	mkdir -p {wildcards.subject}/{TIME}/Actionable
-	perl {input.convertor} {wildcards.sample} {input.defuse} {input.tophat} {input.fc} {wildcards.subject}/{TIME}{ACT_DIR} |awk 'NR<2{{print $0;next}}{{print $0| "sort "}}' >{output}
+	perl {input.convertor} {wildcards.sample} {input.defuse} {input.tophat} {input.fc} {input.SF} {wildcards.subject}/{TIME}{ACT_DIR} |awk 'NR<2{{print $0;next}}{{print $0| "sort "}}' >{output}
 	#######################
 	"""
 ############
