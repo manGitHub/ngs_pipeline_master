@@ -10,6 +10,7 @@
 	"Novo_index"		: "/projects/Clinomics/Tools/ref/hg19/Index/novoalign/chr_all_hg19.nbx",
 	"STAR_ref"		: "/projects/Clinomics/Tools/ref/hg19/Index/STAR_hg19_index",
 	"starwithfusion"	: "/projects/Clinomics/Tools/ref/hg19/Index/ctat_genome_lib_STAR_STAR-Fusion/ref_genome.fa.star.idx",
+	"STAR_2.5.3a"		: "/projects/Clinomics/Tools/ref/hg19/Index/STAR_hg19_2.5.3a",
 	"STAR_Fusion"		: "/projects/Clinomics/Tools/ref/hg19/Index/ctat_genome_lib_STAR_STAR-Fusion",
 	"reference"		: "/projects/Clinomics/Tools/ref/hg19/ucsc.hg19.fasta",
 	"HLA"			: "/projects/Clinomics/Tools/ref/hg19/HLA/",

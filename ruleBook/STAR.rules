@@ -7,14 +7,12 @@ rule STAR_TPM:
         	R2="{subject}/{TIME}/FQ/{sample}_R2.fastq.gz",
 	output:
 		temp("{subject}/{TIME}/{sample}/{sample}.star_UCSC.bam"),
-		temp("{subject}/{TIME}/{sample}/{sample}.star_UCSC.bam.bai"),
-		temp("{subject}/{TIME}/{sample}/{sample}_ucscAligned.toTranscriptome.out.bam"),
-		temp("{subject}/{TIME}/{sample}/{sample}_ucscChimeric.out.junction")
+		temp("{subject}/{TIME}/{sample}/{sample}.star_UCSC.bam.bai")
 	version: config["STAR"]
 	params:
 		rulename  = "STAR",
 		batch     = config[config['host']]['job_STAR_TPM'],
-		star_ref  = config['starwithfusion'],
+		star_ref  = config['STAR_2.5.3a'],
 		home      = WORK_DIR,
 	shell: """
 	#######################
@@ -27,21 +25,12 @@ rule STAR_TPM:
 		--readFilesCommand zcat\
                 --outSAMtype BAM SortedByCoordinate\
 		--twopassMode Basic \
-		--chimSegmentMin 12\
-		--chimJunctionOverhangMin 12\
-		--alignSJDBoverhangMin 10\
-		--alignMatesGapMax 100000\
-		--alignIntronMax 100000\
-		--chimSegmentReadGapMax 3\
 		--outFileNamePrefix {wildcards.sample}_ucsc \
 		--runThreadN ${{THREADS}} \
 		--outFilterMismatchNmax 2\
 		--outSAMunmapped Within\
-		--quantMode TranscriptomeSAM
 	echo "Finished STAR twopass mapping"
 	mv -f {wildcards.sample}_ucscAligned.sortedByCoord.out.bam {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/{wildcards.sample}.star_UCSC.bam
-	mv -f {wildcards.sample}_ucscAligned.toTranscriptome.out.bam {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/{wildcards.sample}_ucscAligned.toTranscriptome.out.bam
-	mv -f {wildcards.sample}_ucscChimeric.out.junction {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/{wildcards.sample}_ucscChimeric.out.junction
 	samtools index {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/{wildcards.sample}.star_UCSC.bam
 	#######################
 	"""
@@ -49,31 +38,65 @@ rule STAR_TPM:
 ##################
 # STAR_Fusion
 ##################
+#rule STAR_Fusion:
+#	input:
+#		Junction="{subject}/{TIME}/{sample}/{sample}_ucscChimeric.out.junction",
+#	output:
+#		"{subject}/{TIME}/{sample}/STAR-Fusion_results/star-fusion.fusion_predictions.tsv",
+#		"{subject}/{TIME}/{sample}/fusion/STAR-fusion.txt",
+#	version: config["STAR-Fusion"],
+#	params:
+#		rulename   = "STAR_Fusion",
+#		samtools   = config['samtools'],
+#		batch      = config[config['host']]['job_STAR_TPM'],
+#		SF_ref	   = config['STAR_Fusion'],
+#		home	  = WORK_DIR,
+#	shell: """
+#	#########################
+#	module load STAR-Fusion/{version}
+#	module load samtools/{params.samtools}
+#	module load perl
+#	STAR-Fusion --genome_lib_dir {params.SF_ref} -J {input.Junction} --CPU ${{THREADS}} --output_dir {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/STAR-Fusion_results
+#	
+#	cp  {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/STAR-Fusion_results/star-fusion.fusion_predictions.tsv {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/fusion/STAR-fusion.txt
+#
+#	###########################
+#       """
+
+##################
+# STAR_Fusion
+##################
 rule STAR_Fusion:
-	input:
-		Junction="{subject}/{TIME}/{sample}/{sample}_ucscChimeric.out.junction",
-	output:
-		"{subject}/{TIME}/{sample}/STAR-Fusion_results/star-fusion.fusion_predictions.tsv",
-		"{subject}/{TIME}/{sample}/fusion/STAR-fusion.txt",
-	version: config["STAR-Fusion"],
-	params:
-		rulename   = "STAR_Fusion",
-		samtools   = config['samtools'],
-		batch      = config[config['host']]['job_STAR_TPM'],
-		SF_ref	   = config['STAR_Fusion'],
+        input:  R=lambda wildcards: FQ[wildcards.sample],
+                R1="{subject}/{TIME}/FQ/{sample}_R1.fastq.gz",
+                R2="{subject}/{TIME}/FQ/{sample}_R2.fastq.gz",
+              	
+        output:
+               	"{subject}/{TIME}/{sample}/STAR-Fusion_results/star-fusion.fusion_predictions.tsv",
+                "{subject}/{TIME}/{sample}/fusion/STAR-fusion.txt",
+        version: config["STAR-Fusion"],
+        params:
+               	rulename   = "STAR_Fusion",
+                samtools   = config['samtools'],
+                batch	   = config[config['host']]['job_STAR_TPM'],
+                SF_ref     = config['STAR_Fusion'],
+	       	STAR	   = config["STAR"],        
 		home	  = WORK_DIR,
-	shell: """
-	#########################
-	module load STAR-Fusion/{version}
-	module load samtools/{params.samtools}
-	module load perl
-	STAR-Fusion --genome_lib_dir {params.SF_ref} -J {input.Junction} --CPU ${{THREADS}} --output_dir {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/STAR-Fusion_results
-	
-	cp  {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/STAR-Fusion_results/star-fusion.fusion_predictions.tsv {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/fusion/STAR-fusion.txt
+        shell: """
+        #########################
+        module load STAR-Fusion/{version}
+        module load samtools/{params.samtools}
+        module load perl
+	module load STAR/{params.STAR}
+        STAR-Fusion --genome_lib_dir {params.SF_ref} --left_fq {input.R[0]} --right_fq {input.R[1]} --CPU ${{THREADS}} --output_dir {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/STAR-Fusion_results
+# STAR-fusion runs STAR innately with these parameters --outReadsUnmapped None  --chimSegmentMin 12  --chimJunctionOverhangMin 12 
+#  --alignSJDBoverhangMin 10  --alignMatesGapMax 100000  --alignIntronMax 100000  --alignSJstitchMismatchNmax 5 -1 5 5  --runThreadN 10 --outSAMstrandField
+#  intronMotif  --outSAMunmapped Within  --outSAMtype BAM Unsorted  --outSAMattrRGline ID:GRPundef  --chimSegmentReadGapMax 3 --twopassMode Basic 
+        cp  {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/STAR-Fusion_results/star-fusion.fusion_predictions.tsv {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/fusion/STAR-fusion.txt
+	rm {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/STAR-Fusion_results/std.Chimeric.out.sam	
 
-	###########################
+        ###########################
         """
-
 
 ###################
 # Picard_bam
