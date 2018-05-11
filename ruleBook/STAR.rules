@@ -93,7 +93,10 @@ rule STAR_Fusion:
 #  --alignSJDBoverhangMin 10  --alignMatesGapMax 100000  --alignIntronMax 100000  --alignSJstitchMismatchNmax 5 -1 5 5  --runThreadN 10 --outSAMstrandField
 #  intronMotif  --outSAMunmapped Within  --outSAMtype BAM Unsorted  --outSAMattrRGline ID:GRPundef  --chimSegmentReadGapMax 3 --twopassMode Basic 
         cp  {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/STAR-Fusion_results/star-fusion.fusion_predictions.tsv {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/fusion/STAR-fusion.txt
+	# remove intermediate files
 	rm {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/STAR-Fusion_results/std.Chimeric.out.sam	
+	rm {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/STAR-Fusion_results/std.STAR.bam
+	rm -rf {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/STAR-Fusion_results/star-fusion.preliminary
 
         ###########################
         """
