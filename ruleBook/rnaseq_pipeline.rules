@@ -21,7 +21,8 @@ if 'RNASeq' in config:
 			#TARGET_R += [subject+"/"+TIME+"/"+sample+"/"+sample+".tophat.final.bam"]
 			TARGET_R += [subject+"/"+TIME+"/"+sample+"/fusion/tophat-fusion.txt"]
 			TARGET_R += [subject+"/"+TIME+"/"+sample+"/fusion/fusion-catcher.txt"]
-			TARGET_R += [subject+"/"+TIME+"/"+sample+"/fusion/defuse.filtered.txt"]
+			# silence Defuse rule 05/11/2018
+			#TARGET_R += [subject+"/"+TIME+"/"+sample+"/fusion/defuse.filtered.txt"]
 			TARGET_R += [subject+"/"+TIME+"/"+sample+"/fusion/STAR-fusion.txt"]
 			TARGET_R += [subject+"/"+TIME+"/"+sample+"/qc/fastqc/"+sample+"_R2_fastqc.html"]
 			TARGET_R += [subject+"/"+TIME+"/qc/"+subject+".circos.png"]
@@ -285,7 +286,7 @@ rule FUSION_CATCHER:
 	#######################
 	"""
 ############
-#       deFuse
+#       deFuse, NOT used in the pipeline 8/11/2018
 ############
 rule DeFuse:
 	input:
@@ -455,7 +456,7 @@ rule Sub_Fusion:
 	input:
 		tophat="{subject}/{TIME}/{sample}/fusion/tophat-fusion.txt",
 		fc="{subject}/{TIME}/{sample}/fusion/fusion-catcher.txt",
-		defuse="{subject}/{TIME}/{sample}/fusion/defuse.filtered.txt",
+		#defuse="{subject}/{TIME}/{sample}/fusion/defuse.filtered.txt",
 		SF="{subject}/{TIME}/{sample}/fusion/STAR-fusion.txt",
 		convertor = NGS_PIPELINE + "/scripts/" + config['Actionable_fusion'],
 	output:
@@ -466,7 +467,7 @@ rule Sub_Fusion:
 	shell: """
 	#######################
 	mkdir -p {wildcards.subject}/{TIME}/Actionable
-	perl {input.convertor} {wildcards.sample} {input.defuse} {input.tophat} {input.fc} {input.SF} {wildcards.subject}/{TIME}{ACT_DIR} |awk 'NR<2{{print $0;next}}{{print $0| "sort "}}' >{output}
+	perl {input.convertor} {wildcards.sample} {input.tophat} {input.fc} {input.SF} {wildcards.subject}/{TIME}{ACT_DIR} |awk 'NR<2{{print $0;next}}{{print $0| "sort "}}' >{output}
 	#######################
 	"""
 ############
