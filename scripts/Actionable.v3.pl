@@ -31,6 +31,7 @@ my $index_of_Gene=1;
 my $index_of_GrandTotal=182;
 my $idx_anno_region=0;
 my $idx_anno_eff=3;
+
 if($ARGV[0] eq 'somatic'){
 	Somatic($ARGV[1], $ARGV[2], $ARGV[3], $ARGV[4], $ARGV[5]);
 	# 1 == HotspotFile [reference]
@@ -236,14 +237,21 @@ sub Germline{
 	my %normal_vaf;
 	my %tumor_vaf;
 	my %germline;
+	
+	#index of the following data in the final output.
+	my $idx_SampleType=196;
+	my $idx_CaptureType=197;
+	my $idx_Level=205;
+	my $idx_VAF=203;
+	
 	foreach my $key (sort keys %judge_tier) {
 		my @temp = split("\t", $key);
-		if ($temp[195] eq 'Normal'){
-			$germline{"$temp[0]\t$temp[1]\t$temp[2]\t$temp[3]\t$temp[4]\t$temp[196]"} = "$temp[204]";
-			$normal_vaf{"$temp[0]\t$temp[1]\t$temp[2]\t$temp[3]\t$temp[4]\t$temp[196]"} = "$temp[202]";
+		if ($temp[$idx_SampleType] eq 'Normal'){
+			$germline{"$temp[0]\t$temp[1]\t$temp[2]\t$temp[3]\t$temp[4]\t$temp[$idx_CaptureType]"} = "$temp[$idx_Level]";
+			$normal_vaf{"$temp[0]\t$temp[1]\t$temp[2]\t$temp[3]\t$temp[4]\t$temp[$idx_CaptureType]"} = "$temp[$idx_VAF]";
 		}
-		if($temp[195] eq 'Tumor'){
-			$tumor_vaf{"$temp[0]\t$temp[1]\t$temp[2]\t$temp[3]\t$temp[4]\t$temp[196]"} = "$temp[202]";
+		if($temp[$idx_SampleType] eq 'Tumor'){
+			$tumor_vaf{"$temp[0]\t$temp[1]\t$temp[2]\t$temp[3]\t$temp[4]\t$temp[$idx_CaptureType]"} = "$temp[$idx_VAF]";
 		}
 	}
 	foreach my $key (sort keys %normal_vaf){
@@ -263,8 +271,8 @@ sub Germline{
 	}
 	foreach my $key (sort keys %judge_tier) {
 		my @temp = split("\t", $key);
-		if (exists $germline{"$temp[0]\t$temp[1]\t$temp[2]\t$temp[3]\t$temp[4]\t$temp[196]"}){
-			$temp[204] = $germline{"$temp[0]\t$temp[1]\t$temp[2]\t$temp[3]\t$temp[4]\t$temp[196]"};
+		if (exists $germline{"$temp[0]\t$temp[1]\t$temp[2]\t$temp[3]\t$temp[4]\t$temp[$idx_CaptureType]"}){
+			$temp[$idx_Level] = $germline{"$temp[0]\t$temp[1]\t$temp[2]\t$temp[3]\t$temp[4]\t$temp[$idx_CaptureType]"};
 			print join("\t", @temp)."\n";
 		}
 	}
