@@ -57,7 +57,7 @@
                 "job_qualimap"   : "--partition=batch  --mem=19G  --cpus-per-task=16 ",
                 "job_fusioncatch": "--partition=batch  --mem=45G  --cpus-per-task=16 ",
                 "job_STAR"       : "--partition=batch  --mem=45G  --cpus-per-task=16 ",
-                "job_STAR_TPM"   : "--partition=mmem,hmem --mem=60G --cpus-per-task=10 ",
+                "job_STAR_TPM"   : "--partition=mmem,hmem --mem=60G --cpus-per-task=8 ",
                 "job_PPH2"       : "--partition=batch  --mem=04G  --cpus-per-task=2  ",
                 "job_SIFT"       : "--partition=batch  --mem=04G  --cpus-per-task=2  ",
                 "job_tophat"     : "--partition=batch  --mem=45G  --cpus-per-task=16 ",
