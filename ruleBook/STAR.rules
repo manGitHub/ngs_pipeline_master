@@ -36,7 +36,7 @@ rule STAR_TPM:
 	"""
 
 ##################
-# STAR_Fusion
+## STAR_Fusion
 ##################
 #rule STAR_Fusion:
 #	input:
@@ -66,40 +66,40 @@ rule STAR_TPM:
 ##################
 # STAR_Fusion
 ##################
-rule STAR_Fusion:
-        input:  R=lambda wildcards: FQ[wildcards.sample],
-                R1="{subject}/{TIME}/FQ/{sample}_R1.fastq.gz",
-                R2="{subject}/{TIME}/FQ/{sample}_R2.fastq.gz",
-              	
-        output:
-               	"{subject}/{TIME}/{sample}/STAR-Fusion_results/star-fusion.fusion_predictions.tsv",
-                "{subject}/{TIME}/{sample}/fusion/STAR-fusion.txt",
-        version: config["STAR-Fusion"],
-        params:
-               	rulename   = "STAR_Fusion",
-                samtools   = config['samtools'],
-                batch	   = config[config['host']]['job_STAR_TPM'],
-                SF_ref     = config['STAR_Fusion'],
-	       	STAR	   = config["STAR"],        
-		home	  = WORK_DIR,
-        shell: """
-        #########################
-        module load STAR-Fusion/{version}
-        module load samtools/{params.samtools}
-        module load perl
-	module load STAR/{params.STAR}
-        STAR-Fusion --genome_lib_dir {params.SF_ref} --left_fq {input.R[0]} --right_fq {input.R[1]} --CPU ${{THREADS}} --output_dir {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/STAR-Fusion_results
+#rule STAR_Fusion:
+#        input:  R=lambda wildcards: FQ[wildcards.sample],
+#                R1="{subject}/{TIME}/FQ/{sample}_R1.fastq.gz",
+#                R2="{subject}/{TIME}/FQ/{sample}_R2.fastq.gz",
+#              	
+#        output:
+#               	"{subject}/{TIME}/{sample}/STAR-Fusion_results/star-fusion.fusion_predictions.tsv",
+#                "{subject}/{TIME}/{sample}/fusion/STAR-fusion.txt",
+#        version: config["STAR-Fusion"],
+#        params:
+#               	rulename   = "STAR_Fusion",
+#                samtools   = config['samtools'],
+#                batch	   = config[config['host']]['job_STAR_TPM'],
+#                SF_ref     = config['STAR_Fusion'],
+#	       	STAR	   = config["STAR"],        
+#		home	  = WORK_DIR,
+#        shell: """
+#        #########################
+#        module load STAR-Fusion/{version}
+#        module load samtools/{params.samtools}
+#        module load perl
+#	module load STAR/{params.STAR}
+#        STAR-Fusion --genome_lib_dir {params.SF_ref} --left_fq {input.R[0]} --right_fq {input.R[1]} --CPU ${{THREADS}} --output_dir {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/STAR-Fusion_results
 # STAR-fusion runs STAR innately with these parameters --outReadsUnmapped None  --chimSegmentMin 12  --chimJunctionOverhangMin 12 
 #  --alignSJDBoverhangMin 10  --alignMatesGapMax 100000  --alignIntronMax 100000  --alignSJstitchMismatchNmax 5 -1 5 5  --runThreadN 10 --outSAMstrandField
 #  intronMotif  --outSAMunmapped Within  --outSAMtype BAM Unsorted  --outSAMattrRGline ID:GRPundef  --chimSegmentReadGapMax 3 --twopassMode Basic 
-        cp  {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/STAR-Fusion_results/star-fusion.fusion_predictions.tsv {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/fusion/STAR-fusion.txt
-	# remove intermediate files
-	rm {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/STAR-Fusion_results/std.Chimeric.out.sam	
-	rm {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/STAR-Fusion_results/std.STAR.bam
-	rm -rf {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/STAR-Fusion_results/star-fusion.preliminary
-
-        ###########################
-        """
+#        cp  {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/STAR-Fusion_results/star-fusion.fusion_predictions.tsv {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/fusion/STAR-fusion.txt
+#	# remove intermediate files
+#	rm {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/STAR-Fusion_results/std.Chimeric.out.sam	
+#	rm {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/STAR-Fusion_results/std.STAR.bam
+#	rm -rf {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/STAR-Fusion_results/star-fusion.preliminary
+#
+#        ###########################
+#        """
 
 ###################
 # Picard_bam
@@ -187,4 +187,153 @@ rule FeatureCounts:
 	{input.script} --nt ${{THREADS}} --lib="{wildcards.sample}" --targetFile="{params.work_dir}/{input.bam}" --referenceGTF="{input.ref}" --featureType="gene" --resultOut="{params.work_dir}/{wildcards.base}/{wildcards.TIME}/{wildcards.sample}/TPM_{wildcards.gtf}/" --annotationRDS={input.geneRDS}
 	{input.script} --nt ${{THREADS}} --lib="{wildcards.sample}" --targetFile="{params.work_dir}/{input.bam}" --referenceGTF="{input.ref}" --featureType="exon" --resultOut="{params.work_dir}/{wildcards.base}/{wildcards.TIME}/{wildcards.sample}/TPM_{wildcards.gtf}/" --annotationRDS={input.exonRDS}
 	#######################
+	"""
+
+##############
+# STAR-UCSC
+###############
+rule STARucsc:
+	input:  R=lambda wildcards: FQ[wildcards.sample],
+		R1="{subject}/{TIME}/FQ/{sample}_R1.fastq.gz",
+		R2="{subject}/{TIME}/FQ/{sample}_R2.fastq.gz",
+	output:
+		temp("{subject}/{TIME}/{sample}/{sample}.UCSC_transcriptome.bam"),	
+	version: config["STAR"]	
+	params:
+		rulename  = "STAR-UCSC",
+		batch     = config[config['host']]['job_STAR_TPM'],
+		star_ucsc_ref  = config['star_2.5.3a_ucsc'],
+		home	 = WORK_DIR,
+	shell: """
+	#################################
+	module load STAR/{version} samtools
+	cd ${{LOCAL}}/
+	# running two pass mapping
+	STAR    --outTmpDir twopass --genomeDir {params.star_ucsc_ref} --readFilesIn {input.R[0]} {input.R[1]} --readFilesCommand zcat --outSAMtype BAM SortedByCoordinate --twopassMode Basic --outFileNamePrefix {wildcards.sample}_UCSC_rsem --runThreadN ${{THREADS}} --outFilterMismatchNmax 2 --outSAMunmapped Within --quantMode TranscriptomeSAM 
+	
+	echo "Finished STAR twopass mapping"
+
+	mv -f {wildcards.sample}_UCSC_rsemAligned.toTranscriptome.out.bam {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/{wildcards.sample}.UCSC_transcriptome.bam
+	####################################
+	"""
+
+##############
+# RSEM-UCSC
+###############
+rule RSEMucsc:
+	input:
+		bam="{subject}/{TIME}/{sample}/{sample}.UCSC_transcriptome.bam",
+	output:
+		"{subject}/{TIME}/{sample}/RSEM_UCSC/{sample}.rsem_UCSC.genes.results",
+		"{subject}/{TIME}/{sample}/RSEM_UCSC/{sample}.rsem_UCSC.isoforms.results"
+	version: config["rsem"],
+	params:
+		rulename = "rsem_ucsc",
+		ref	 = config['rsem_ucsc_ref'],
+		batch     = config[config['host']]['job_STAR'],
+		home	  = WORK_DIR,
+	shell: """
+	#################################
+	module load rsem/{version}
+	cd ${{LOCAL}}/
+	rsem-calculate-expression --no-bam-output --paired-end -p ${{THREADS}}  --estimate-rspd  --bam {params.home}/{input.bam} {params.ref} {wildcards.sample}_UCSC
+	echo "gene and transcript level counts generated"
+	mkdir -p {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/RSEM_UCSC
+	mv -f {wildcards.sample}_UCSC.genes.results {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/RSEM_UCSC/{wildcards.sample}.rsem_UCSC.genes.results
+	mv -f {wildcards.sample}_UCSC.isoforms.results {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/RSEM_UCSC/{wildcards.sample}.rsem_UCSC.isoforms.results
+	#################################
+	"""
+
+##############
+#STAR-ENS
+################
+rule STARens:
+	input:	R=lambda wildcards: FQ[wildcards.sample],
+		R1="{subject}/{TIME}/FQ/{sample}_R1.fastq.gz",
+		R2="{subject}/{TIME}/FQ/{sample}_R2.fastq.gz",
+	output:
+		temp("{subject}/{TIME}/{sample}/{sample}.star.bam"),
+		temp("{subject}/{TIME}/{sample}/{sample}.star.bam.bai"),
+		"{subject}/{TIME}/{sample}/{sample}Chimeric.out.junction",
+		temp("{subject}/{TIME}/{sample}/{sample}.ENS_transcriptome.bam"),
+	version:
+		config["STAR"]
+	params:
+		rulename = "STAR-ENS",
+		samtools = config['samtools'],
+		batch    = config[config['host']]['job_STAR'],
+		star_ens_ref  = config['star_2.5.3a_ens'],
+		home     = WORK_DIR,
+		picard   = config['picard']
+	shell: """
+	#########################################
+	module load STAR/{version}
+	cd ${{LOCAL}}/
+	STAR	--genomeDir {params.star_ens_ref} --readFilesIn {input.R[0]} {input.R[1]} --readFilesCommand zcat --outFileNamePrefix {wildcards.sample}_ENS --runThreadN ${{THREADS}} --outSAMunmapped Within --chimSegmentMin 12  --chimJunctionOverhangMin 12 --alignSJDBoverhangMin 10  --alignMatesGapMax 100000  --alignIntronMax 100000  --chimSegmentReadGapMax 3 --outFilterMismatchNmax 2 --outSAMtype BAM SortedByCoordinate --quantMode TranscriptomeSAM
+	echo "STAR ENS mapping completed"
+	mv -f {wildcards.sample}_ENSChimeric.out.junction {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/{wildcards.sample}Chimeric.out.junction
+	mv -f {wildcards.sample}_ENSAligned.toTranscriptome.out.bam {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/{wildcards.sample}.ENS_transcriptome.bam
+	module load picard/{params.picard}
+	java -Xmx${{MEM}}g -Djava.io.tmpdir=${{LOCAL}} -jar $PICARD_JAR AddOrReplaceReadGroups VALIDATION_STRINGENCY=SILENT INPUT={wildcards.sample}_ENSAligned.sortedByCoord.out.bam OUTPUT={params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/{wildcards.sample}.star.bam SORT_ORDER=coordinate RGLB={wildcards.sample} RGPU={wildcards.sample} RGPL=ILLUMINA RGSM={wildcards.sample} RGCN=khanlab
+	module load samtools/{params.samtools}
+	samtools index {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/{wildcards.sample}.star.bam
+	##########################################
+	"""
+
+######################
+# STAR_Fusion
+######################
+rule STAR_Fusion:
+	input:
+		Junction="{subject}/{TIME}/{sample}/{sample}Chimeric.out.junction",
+	output:
+		"{subject}/{TIME}/{sample}/STAR-Fusion_results/star-fusion.fusion_predictions.tsv",
+		"{subject}/{TIME}/{sample}/fusion/STAR-fusion.txt",
+	version: config["STAR-Fusion"],
+	params:
+		rulename   =  "STAR_Fusion",
+		samtools   =  config['samtools'],
+		batch	   = config[config['host']]['job_STAR_TPM'],
+		SF_ref     = config['STAR_Fusion_ENS'],
+		STAR	   = config["STAR"],
+		home	   = WORK_DIR,
+	shell: """
+	##########################
+	module load STAR-Fusion/{version}
+	module load samtools/{params.samtools}
+	module load perl
+	module load STAR/{params.STAR}
+	STAR-Fusion --genome_lib_dir {params.SF_ref} -J {params.home}/{input.Junction} --CPU ${{THREADS}} --output_dir {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/STAR-Fusion_results
+	cp {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/STAR-Fusion_results/star-fusion.fusion_predictions.tsv {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/fusion/STAR-fusion.txt
+	# remove intermediate files
+	rm -rf {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/STAR-Fusion_results/star-fusion.preliminary
+	
+	##########################
+	"""
+
+########################
+# RSEM-ENS
+########################
+rule RSEMens:
+	input:
+		bam="{subject}/{TIME}/{sample}/{sample}.ENS_transcriptome.bam",
+	output:
+		"{subject}/{TIME}/{sample}/RSEM_ENS/{sample}.rsem_ENS.genes.results",
+		"{subject}/{TIME}/{sample}/RSEM_ENS/{sample}.rsem_ENS.isoforms.results",
+	version: config["rsem"],
+	params:
+		rulename = "rsem_ens",
+		ref      = config['rsem_ens_ref'],
+		batch    = config[config['host']]['job_STAR'],
+		home     = WORK_DIR,
+	shell: """
+	################################
+	module load rsem/{version}
+	cd ${{LOCAL}}/
+	rsem-calculate-expression --no-bam-output --paired-end -p ${{THREADS}}  --estimate-rspd  --bam {params.home}/{input.bam} {params.ref} {wildcards.sample}_ENS
+	echo "gene and transcript level counts generated"
+	mkdir -p {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/RSEM_ENS
+	mv -f {wildcards.sample}_ENS.genes.results {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/RSEM_ENS/{wildcards.sample}.rsem_ENS.genes.results
+	mv -f {wildcards.sample}_ENS.isoforms.results {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/RSEM_ENS/{wildcards.sample}.rsem_ENS.isoforms.results
+	################################
 	"""

@@ -35,6 +35,10 @@ if 'RNASeq' in config:
 			TARGET_R += [subject+"/"+TIME+"/"+sample+"/qc/"+sample+".star.gt"]
 			TARGET_R += [subject+"/"+TIME+"/"+sample+"/fusion/"+sample+".actionable.fusion.txt"]
 			TARGET_R += [subject+"/"+TIME+"/"+sample+"/calls/"+sample+".HC_RNASeq.annotated.txt"]
+#			TARGET_R += [subject+"/"+TIME+"/"+sample+"/"+sample+".UCSC_transcriptome.bam"]
+#			TARGET_R += [subject+"/"+TIME+"/"+sample+"/"+sample+".ENS_transcriptome.bam"]
+			TARGET_R += [subject+"/"+TIME+"/"+sample+"/RSEM_UCSC/"+sample+".rsem_UCSC.genes.results"]
+			TARGET_R += [subject+"/"+TIME+"/"+sample+"/RSEM_ENS/"+sample+".rsem_ENS.genes.results"]
 			add_to_SUBJECT_ANNO(subject, "rnaseq", [subject+"/"+TIME+"/"+sample+"/calls/"+sample+".HC_RNASeq.annotated.txt"])
 			for gtf in config['GTF']:
 				TARGET_R += [subject+"/"+TIME+"/"+sample+"/TPM_"+gtf+"/"+sample+".transcript.TPM.txt"]
@@ -273,16 +277,19 @@ rule FUSION_CATCHER:
 		#R1="{base}/{TIME}/FQ/{sample}_R1.fastq.gz",
 		#R2="{base}/{TIME}/FQ/{sample}_R2.fastq.gz"
 	output:
-		"{base}/{TIME}/{sample}/fusion/fusion-catcher.txt"
+		"{base}/{TIME}/{sample}/fusion/fusion-catcher.txt",
+		"{base}/{TIME}/{sample}/fusion/fusion-catcher_summary_candidate_fusions.txt"
 	version: config['fusioncatcher']
 	params:
 		rulename = "fc",
-		batch    = config[config['host']]['job_fusioncatch']
+		batch    = config[config['host']]['job_fusioncatch'],
 	shell: """
 	#######################
 	module load fusioncatcher/{version}
 	fusioncatcher -p ${{THREADS}} -i {input.R[0]},{input.R[1]} -o ${{LOCAL}}/
-	cp ${{LOCAL}}/final-list_candidate-fusion-genes.GRCh37.txt {wildcards.base}/{TIME}/{wildcards.sample}/fusion/fusion-catcher.txt
+
+	cp ${{LOCAL}}/final-list_candidate-fusion-genes.hg19.txt {wildcards.base}/{TIME}/{wildcards.sample}/fusion/fusion-catcher.txt
+	cp ${{LOCAL}}/summary_candidate_fusions.txt {wildcards.base}/{TIME}/{wildcards.sample}/fusion/fusion-catcher_summary_candidate_fusions.txt
 	#######################
 	"""
 ############
@@ -336,77 +343,77 @@ rule DeFuse:
 ############
 #       STAR
 ############
-rule STAR:
-	input:
-		R=lambda wildcards: FQ[wildcards.sample],
-		#R1="{base}/{TIME}/FQ/{sample}_R1.fastq.gz",
-		#R2="{base}/{TIME}/FQ/{sample}_R2.fastq.gz",
-		ref=config["reference"],
-	output:
-		temp("{base}/{TIME}/{sample}/{sample}.star.bam"),
-		temp("{base}/{TIME}/{sample}/{sample}.star.bam.bai")
-	version: config["STAR_old"]
-	params:
-		rulename  = "STAR",
-		samtools  = config['samtools'],
-		batch     = config[config['host']]['job_STAR'],
-		star_ref  = config['STAR_ref'],
-		awk       = NGS_PIPELINE + "/scripts/SJDB.awk",
-		home      = WORK_DIR,
-		picard    = config['picard']
-	shell: """
-	#######################
-	module load STAR/{version}
-	cd ${{LOCAL}}/
-	# run 1st pass
-	STAR --outTmpDir STEP1 \
-		--genomeDir {params.star_ref} \
-		--readFilesIn {input.R[0]} {input.R[1]} \
-		--readFilesCommand zcat\
-		--outFileNamePrefix {wildcards.sample} \
-		--runThreadN ${{THREADS}} \
-		--outFilterMismatchNmax 2
-	echo "Finished Step 1"
-
-	# make splice junctions database file out of SJ.out.tab, filter out non-canonical junctions
-	mkdir GenomeForPass2
-	awk -f {params.awk} {wildcards.sample}SJ.out.tab > GenomeForPass2/{wildcards.sample}.out.tab.Pass1.sjdb
-	echo "Finished Step 2"
-
-	# generate genome with junctions from the 1st pass
-	STAR --outTmpDir STEP1\
-		--genomeDir GenomeForPass2\
-		--runMode genomeGenerate\
-		--genomeSAindexNbases 8\
-		--genomeFastaFiles {input.ref}\
-		--sjdbFileChrStartEnd GenomeForPass2/{wildcards.sample}.out.tab.Pass1.sjdb\
-		--sjdbOverhang 100\
-		--runThreadN ${{THREADS}}
-	echo "Finished Step 3"
-
-	# run 2nd pass with the new genome
-	STAR --outTmpDir STEP1\
-		--genomeDir GenomeForPass2\
-		--runThreadN ${{THREADS}}\
-		--outSAMattributes All\
-		--readFilesIn {input.R[0]} {input.R[1]}\
-		--readFilesCommand zcat\
-		--genomeLoad NoSharedMemory\
-		--outFileNamePrefix {wildcards.sample}_pass2
-	echo "Finished Step 4"
-
-	module load picard/{params.picard}
-	java -Xmx${{MEM}}g -Djava.io.tmpdir=${{LOCAL}} -jar $PICARD_JAR AddOrReplaceReadGroups\
-	VALIDATION_STRINGENCY=SILENT\
-	INPUT={wildcards.sample}_pass2Aligned.out.sam\
-	OUTPUT={params.home}/{wildcards.base}/{TIME}/{wildcards.sample}/{wildcards.sample}.star.bam\
-	SORT_ORDER=coordinate RGLB={wildcards.sample} RGPU={wildcards.sample} RGPL=ILLUMINA RGSM={wildcards.sample} RGCN=khanlab
-
-	echo "Finished Step 5"
-	module load samtools/{params.samtools}
-	samtools index {params.home}/{wildcards.base}/{TIME}/{wildcards.sample}/{wildcards.sample}.star.bam
-	#######################
-	"""
+#rule STAR:
+#	input:
+#		R=lambda wildcards: FQ[wildcards.sample],
+#		#R1="{base}/{TIME}/FQ/{sample}_R1.fastq.gz",
+#		#R2="{base}/{TIME}/FQ/{sample}_R2.fastq.gz",
+#		ref=config["reference"],
+#	output:
+#		temp("{base}/{TIME}/{sample}/{sample}.star.bam"),
+#		temp("{base}/{TIME}/{sample}/{sample}.star.bam.bai")
+#	version: config["STAR_old"]
+#	params:
+#		rulename  = "STAR",
+#		samtools  = config['samtools'],
+#		batch     = config[config['host']]['job_STAR'],
+#		star_ref  = config['STAR_ref'],
+#		awk       = NGS_PIPELINE + "/scripts/SJDB.awk",
+#		home      = WORK_DIR,
+#		picard    = config['picard']
+#	shell: """
+#	#######################
+#	module load STAR/{version}
+#	cd ${{LOCAL}}/
+#	# run 1st pass
+#	STAR --outTmpDir STEP1 \
+#		--genomeDir {params.star_ref} \
+#		--readFilesIn {input.R[0]} {input.R[1]} \
+#		--readFilesCommand zcat\
+#		--outFileNamePrefix {wildcards.sample} \
+#		--runThreadN ${{THREADS}} \
+#		--outFilterMismatchNmax 2
+#	echo "Finished Step 1"
+#
+#	# make splice junctions database file out of SJ.out.tab, filter out non-canonical junctions
+#	mkdir GenomeForPass2
+#	awk -f {params.awk} {wildcards.sample}SJ.out.tab > GenomeForPass2/{wildcards.sample}.out.tab.Pass1.sjdb
+#	echo "Finished Step 2"
+#
+#	# generate genome with junctions from the 1st pass
+#	STAR --outTmpDir STEP1\
+#		--genomeDir GenomeForPass2\
+#		--runMode genomeGenerate\
+#		--genomeSAindexNbases 8\
+#		--genomeFastaFiles {input.ref}\
+#		--sjdbFileChrStartEnd GenomeForPass2/{wildcards.sample}.out.tab.Pass1.sjdb\
+#		--sjdbOverhang 100\
+#		--runThreadN ${{THREADS}}
+#	echo "Finished Step 3"
+#
+#	# run 2nd pass with the new genome
+#	STAR --outTmpDir STEP1\
+#		--genomeDir GenomeForPass2\
+#		--runThreadN ${{THREADS}}\
+#		--outSAMattributes All\
+#		--readFilesIn {input.R[0]} {input.R[1]}\
+#		--readFilesCommand zcat\
+#		--genomeLoad NoSharedMemory\
+#		--outFileNamePrefix {wildcards.sample}_pass2
+#	echo "Finished Step 4"
+#
+#	module load picard/{params.picard}
+#	java -Xmx${{MEM}}g -Djava.io.tmpdir=${{LOCAL}} -jar $PICARD_JAR AddOrReplaceReadGroups\
+#	VALIDATION_STRINGENCY=SILENT\
+#	INPUT={wildcards.sample}_pass2Aligned.out.sam\
+#	OUTPUT={params.home}/{wildcards.base}/{TIME}/{wildcards.sample}/{wildcards.sample}.star.bam\
+#	SORT_ORDER=coordinate RGLB={wildcards.sample} RGPU={wildcards.sample} RGPL=ILLUMINA RGSM={wildcards.sample} RGCN=khanlab
+#
+#	echo "Finished Step 5"
+#	module load samtools/{params.samtools}
+#	samtools index {params.home}/{wildcards.base}/{TIME}/{wildcards.sample}/{wildcards.sample}.star.bam
+#	#######################
+#	"""
 ############
 # RNASeq Hapcaller
 ############
@@ -418,14 +425,14 @@ rule HapCall_RNASeq:
 		dbsnp=config["dbsnp"]
 	output:
 		vcf="{base}/{TIME}/{sample}/calls/{sample}.HC_RNASeq.raw.vcf"
-	version: config["GATK"]
+	version: config["GATK_new"]
 	params:
 		rulename = "HC_RNA",
-		batch    = config[config['host']]["job_HC"]
+		batch    = config[config['host']]["job_gatk_RNA"]
 	shell: """
 	#######################
 	module load GATK/{version}
-	java -Xmx${{MEM}}g -Djava.io.tmpdir=${{LOCAL}} -jar $GATK_JAR -T HaplotypeCaller -R {input.ref} -I {input.bam} -o ${{LOCAL}}/{wildcards.sample}.vcf --dbsnp {input.dbsnp} -dontUseSoftClippedBases -stand_call_conf 30 -stand_emit_conf 30
+	java -Xmx${{MEM}}g -Djava.io.tmpdir=${{LOCAL}} -jar $GATK_JAR -T HaplotypeCaller -R {input.ref} -I {input.bam} -o ${{LOCAL}}/{wildcards.sample}.vcf --dbsnp {input.dbsnp} -dontUseSoftClippedBases -stand_call_conf 30 
 	java -Xmx${{MEM}}g -Djava.io.tmpdir=${{LOCAL}} -jar $GATK_JAR -T VariantFiltration -R {input.ref} -V ${{LOCAL}}/{wildcards.sample}.vcf -window 35 -cluster 3 --filterExpression "FS > 30.0 || QD < 2" -filterName "RNASeqFilters_FS_QD" -o {output.vcf}
 	#######################
 	"""
