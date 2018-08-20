@@ -18,7 +18,7 @@ rule cnvkitPooled:
 	version: config["cnvkit"]
 	params:
 		rulename  = "cnvkit",
-		batch     = config[config['host']]["job_gatk"],
+		batch     = config[config['host']]["job_cnvkit"],
 	shell: """
 	#######################
 	module load cnvkit/{version}
@@ -42,7 +42,7 @@ rule cnvkitPaired:
 	version: config["cnvkit"]
 	params:
 		rulename  = "cnvkit",
-		batch     = config[config['host']]["job_gatk"],
+		batch     = config[config['host']]["job_cnvkit"],
 	shell: """
 	#######################
 	module load cnvkit/{version}
