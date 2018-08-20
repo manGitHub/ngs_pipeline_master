@@ -303,6 +303,7 @@ rule STAR_Fusion:
 	module load samtools/{params.samtools}
 	module load perl
 	module load STAR/{params.STAR}
+	if [ -d "{params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/STAR-Fusion_results" ]; then rm -Rf {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/STAR-Fusion_results; fi
 	STAR-Fusion --genome_lib_dir {params.SF_ref} -J {params.home}/{input.Junction} --CPU ${{THREADS}} --output_dir {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/STAR-Fusion_results
 	cp {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/STAR-Fusion_results/star-fusion.fusion_predictions.tsv {params.home}/{wildcards.subject}/{TIME}/{wildcards.sample}/fusion/STAR-fusion.txt
 	# remove intermediate files
