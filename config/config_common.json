@@ -46,7 +46,7 @@
 	"pvacseq"		: "4.0.6",
 	"Actionable_mutation"	: "Actionable.v3.pl",
 	"Actionable_fusion"	: "ActionableFusion.v1.pl",
-	"Panel_List"		: ["clin.snv.v1", "clin.cnv.v2", "clin.snv.v2", "nbl.panel", "seqcapez.rms.v1"],
+	"Panel_List"		: ["clin.snv.v1", "clin.cnv.v2", "clin.snv.v2", "nbl.panel", "seqcapez.rms.v1", "nbl.somatic.panel"],
 	"failed_exon_params": {
 		"wholegenome"		:{"Normal":"5","Tumor":"5"},
 		"seqcapez.hu.ex.v3"	:{"Normal":"20","Tumor":"20"},
@@ -57,6 +57,7 @@
 		"clin.snv.v2"		:{"Normal":"20","Tumor":"50"},
 		"seqcapez.rms.v1"	:{"Normal":"100","Tumor":"100"},
 		"nbl.panel"		:{"Normal":"100","Tumor":"100"},
+		"nbl.somatic.panel"	:{"Normal":"100","Tumor":"100"},
 		"Agilent.Exon50M"	:{"Normal":"20","Tumor":"20"},
 		"agilent.utr.v4"	:{"Normal":"20","Tumor":"20"},
 		"agilent.v4"		:{"Normal":"20","Tumor":"20"},
