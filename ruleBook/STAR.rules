@@ -262,7 +262,7 @@ rule STARens:
 	params:
 		rulename = "STAR-ENS",
 		samtools = config['samtools'],
-		batch    = config[config['host']]['job_STAR'],
+		batch    = config[config['host']]['job_STAR_TPM'],
 		star_ens_ref  = config['star_2.5.3a_ens'],
 		home     = WORK_DIR,
 		picard   = config['picard']
