@@ -2,13 +2,14 @@ HOT_SPOT ={}
 TARGET     += ["{subject}/{TIME}/{sample}/calls/{sample}.bwa.pileup.txt".format(TIME=TIME, subject=SAMPLE_TO_SUBJECT[s], sample=s) for s in SAMPLES]
 if 'RNASeq' in config:
 	for subject  in config['RNASeq'].keys():
-		TARGET    += [subject+"/"+TIME+"/"+subject+"/db/"+subject+".hotspot"]
-		for sample in config['RNASeq'][subject]:
-			TARGET    +=  [subject+"/"+TIME+"/"+sample+"/calls/"+sample+".star.pileup.txt"]
-			if subject not in HOT_SPOT:
-				HOT_SPOT[subject] = [subject+"/"+TIME+"/"+sample+"/calls/"+sample+".star.pileup.txt"]
-			else:
-				HOT_SPOT[subject].extend([subject+"/"+TIME+"/"+sample+"/calls/"+sample+".star.pileup.txt"])
+		if subject in SUB_RNASEQ:
+			TARGET    += [subject+"/"+TIME+"/"+subject+"/db/"+subject+".hotspot"]
+			for sample in SAM_RNASEQ[subject]:
+				TARGET    +=  [subject+"/"+TIME+"/"+sample+"/calls/"+sample+".star.pileup.txt"]
+				if subject not in HOT_SPOT:
+					HOT_SPOT[subject] = [subject+"/"+TIME+"/"+sample+"/calls/"+sample+".star.pileup.txt"]
+				else:
+					HOT_SPOT[subject].extend([subject+"/"+TIME+"/"+sample+"/calls/"+sample+".star.pileup.txt"])
 		
 if 'subject' in config:
 	local =[]

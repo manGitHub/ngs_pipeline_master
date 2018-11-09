@@ -1,22 +1,35 @@
 RNA_QC_ALL =[]
 TARGET_R=[]
 SUB2RNA = {}
-SUB_RNASEQ=[]
+SUB_RNASEQ=set()
 SUB_FUSION={}
 SUB_QC={}
+SAM_RNASEQ={}
+
 if 'RNASeq' in config:
 	for subject,samples in config['RNASeq'].items():
-		SUB_RNASEQ.append(subject)
+#		SUB_RNASEQ.append(subject)
+		SAM_RNASEQ[subject] = []
 		for sample in samples:
-			SUB2RNA[sample]=subject
-	for subject  in config['RNASeq'].keys():
+			if config['sample_captures'][sample] not in config['exclude_from_rnaseq']:
+				SUB2RNA[sample]=subject
+				
+				##Gather all the transcriptome libraries for the subject
+				SAM_RNASEQ[subject] += [sample]
+
+				
+				##This subject has atleast one transcriptome library. The variable is defined as a set. Adding duplicate elements to 
+				##a set has no effect.	
+				SUB_RNASEQ.add(subject)
+
+	for subject in SUB_RNASEQ:
 		RNA_QC_ALL +=[subject+"/"+TIME+"/qc/"+subject+".RnaSeqQC.txt"]
 		TARGET_R   +=[subject+"/"+TIME+"/"+subject+"/db/"+subject+".rnaseq"]
 		TARGET_R   +=[subject+"/"+TIME+ACT_DIR+subject+".fusion.actionable.txt"]
 		TARGET_R   +=[subject+"/"+TIME+ACT_DIR+subject+".rnaseq.actionable.txt"]
 		TARGET_R   +=[subject+"/"+TIME+"/qc/"+subject+".RnaSeqQC.txt"]
 		TARGET_R   +=[subject+"/"+TIME+"/qc/"+subject+".transcriptCoverage.png"]
-		for sample in config['RNASeq'][subject]:
+		for sample in SAM_RNASEQ[subject]:
 			TARGET_R += [subject+"/"+TIME+"/"+sample+"/"+sample+".star.final.bam"]
 			#TARGET_R += [subject+"/"+TIME+"/"+sample+"/"+sample+".tophat.final.bam"]
 			TARGET_R += [subject+"/"+TIME+"/"+sample+"/fusion/tophat-fusion.txt"]
@@ -44,34 +57,39 @@ if 'RNASeq' in config:
 				TARGET_R += [subject+"/"+TIME+"/"+sample+"/TPM_"+gtf+"/"+sample+".transcript.TPM.txt"]
 				TARGET_R += [subject+"/"+TIME+"/"+sample+"/TPM_"+gtf+"/"+sample+".gene.TPM.txt"]
 				TARGET_R += [subject+"/"+TIME+"/"+sample+"/TPM_"+gtf+"/"+sample+".exon.TPM.txt"]
-		TARGET_R  += ["{subject}/{TIME}/{sample}/calls/{sample}.HC_RNASeq.raw.vcf".format(TIME=TIME, subject=SUB2RNA[s], sample=s) for s in config['RNASeq'][subject]]
-		SUB_FUSION[subject] = ["{subject}/{TIME}/{sample}/fusion/{sample}.actionable.fusion.txt".format(TIME=TIME, subject=SUB2RNA[s], sample=s) for s in config['RNASeq'][subject]]
-		SUB_QC[subject]     = ["{subject}/{TIME}/{sample}/qc/{sample}.RnaSeqQC.txt".format(TIME=TIME, subject=SUB2RNA[s], sample=s) for s in config['RNASeq'][subject]]
+		TARGET_R  += ["{subject}/{TIME}/{sample}/calls/{sample}.HC_RNASeq.raw.vcf".format(TIME=TIME, subject=SUB2RNA[s], sample=s) for s in SAM_RNASEQ[subject]]
+		SUB_FUSION[subject] = ["{subject}/{TIME}/{sample}/fusion/{sample}.actionable.fusion.txt".format(TIME=TIME, subject=SUB2RNA[s], sample=s) for s in SAM_RNASEQ[subject]]
+		SUB_QC[subject]     = ["{subject}/{TIME}/{sample}/qc/{sample}.RnaSeqQC.txt".format(TIME=TIME, subject=SUB2RNA[s], sample=s) for s in SAM_RNASEQ[subject]]
 		if subject in SUBJECT_VCFS:
-			SUBJECT_VCFS[subject] += ["{subject}/{TIME}/{sample}/calls/{sample}.HC_RNASeq.snpEff.txt".format(TIME=TIME, subject=SUB2RNA[s], sample=s) for s in config['RNASeq'][subject]]
+			SUBJECT_VCFS[subject] += ["{subject}/{TIME}/{sample}/calls/{sample}.HC_RNASeq.snpEff.txt".format(TIME=TIME, subject=SUB2RNA[s], sample=s) for s in SAM_RNASEQ[subject]]
 		else:
 			SUBJECT_VCFS[subject] = []
-			SUBJECT_VCFS[subject] += ["{subject}/{TIME}/{sample}/calls/{sample}.HC_RNASeq.snpEff.txt".format(TIME=TIME, subject=SUB2RNA[s], sample=s) for s in config['RNASeq'][subject]]
+			SUBJECT_VCFS[subject] += ["{subject}/{TIME}/{sample}/calls/{sample}.HC_RNASeq.snpEff.txt".format(TIME=TIME, subject=SUB2RNA[s], sample=s) for s in SAM_RNASEQ[subject]]
 		if subject in SUB_HOT:
-			SUB_HOT[subject] += ["{subject}/{TIME}/{sample}/qc/{sample}.star.hotspot.depth".format(TIME=TIME, subject=SUB2RNA[s], sample=s) for s in config['RNASeq'][subject]]
-			SUB_LOH[subject] += ["{subject}/{TIME}/{sample}/qc/{sample}.star.loh".format(TIME=TIME, subject=SUB2RNA[s], sample=s) for s in config['RNASeq'][subject]]
-			SUB_COV[subject] += ["{subject}/{TIME}/{sample}/qc/{sample}.star.coverage.txt".format(TIME=TIME, subject=SUB2RNA[s], sample=s) for s in config['RNASeq'][subject]]
-			SUB_GT[subject]  += ["{subject}/{TIME}/{sample}/qc/{sample}.star.gt".format(TIME=TIME,subject=SUB2RNA[s], sample=s) for s in config['RNASeq'][subject]]
+			SUB_HOT[subject] += ["{subject}/{TIME}/{sample}/qc/{sample}.star.hotspot.depth".format(TIME=TIME, subject=SUB2RNA[s], sample=s) for s in SAM_RNASEQ[subject]]
+			SUB_LOH[subject] += ["{subject}/{TIME}/{sample}/qc/{sample}.star.loh".format(TIME=TIME, subject=SUB2RNA[s], sample=s) for s in SAM_RNASEQ[subject]]
+			SUB_COV[subject] += ["{subject}/{TIME}/{sample}/qc/{sample}.star.coverage.txt".format(TIME=TIME, subject=SUB2RNA[s], sample=s) for s in SAM_RNASEQ[subject]]
+			SUB_GT[subject]  += ["{subject}/{TIME}/{sample}/qc/{sample}.star.gt".format(TIME=TIME,subject=SUB2RNA[s], sample=s) for s in SAM_RNASEQ[subject]]
 		else:
 			SUB_HOT[subject] = []
 			SUB_LOH[subject] = []
 			SUB_COV[subject] = []
 			SUB_GT[subject]  = []
-			SUB_HOT[subject] += ["{subject}/{TIME}/{sample}/qc/{sample}.star.hotspot.depth".format(TIME=TIME, subject=SUB2RNA[s], sample=s) for s in config['RNASeq'][subject]]
-			SUB_LOH[subject] += ["{subject}/{TIME}/{sample}/qc/{sample}.star.loh".format(TIME=TIME, subject=SUB2RNA[s], sample=s) for s in config['RNASeq'][subject]]
-			SUB_COV[subject] += ["{subject}/{TIME}/{sample}/qc/{sample}.star.coverage.txt".format(TIME=TIME,subject=SUB2RNA[s], sample=s) for s in config['RNASeq'][subject]]
-			SUB_GT[subject]  += ["{subject}/{TIME}/{sample}/qc/{sample}.star.gt".format(TIME=TIME, subject=SUB2RNA[s], sample=s) for s in config['RNASeq'][subject]]
+			SUB_HOT[subject] += ["{subject}/{TIME}/{sample}/qc/{sample}.star.hotspot.depth".format(TIME=TIME, subject=SUB2RNA[s], sample=s) for s in SAM_RNASEQ[subject]]
+			SUB_LOH[subject] += ["{subject}/{TIME}/{sample}/qc/{sample}.star.loh".format(TIME=TIME, subject=SUB2RNA[s], sample=s) for s in SAM_RNASEQ[subject]]
+			SUB_COV[subject] += ["{subject}/{TIME}/{sample}/qc/{sample}.star.coverage.txt".format(TIME=TIME,subject=SUB2RNA[s], sample=s) for s in SAM_RNASEQ[subject]]
+			SUB_GT[subject]  += ["{subject}/{TIME}/{sample}/qc/{sample}.star.gt".format(TIME=TIME, subject=SUB2RNA[s], sample=s) for s in SAM_RNASEQ[subject]]
+
+
+############
+include: NGS_PIPELINE +"/ruleBook/mixcr.rules"
+
 ############
 #       RNASeq All
 ############
 rule RNASeq:
 	input:
-		TARGET_R,
+		TARGET_R, TARGET_TCR
 	output:
 		expand("ngs_pipeline_{SAMPLESHEET}_{NOW}.rnaseq.done", NOW=NOW, SAMPLESHEET=SAMPLESHEET)
 	wildcard_constraints:
