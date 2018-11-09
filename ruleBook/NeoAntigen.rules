@@ -22,7 +22,7 @@ if 'sample_references' in config:
 
 if 'RNASeq' in config:
 	for subject  in config['RNASeq'].keys():
-		for sample in config['RNASeq'][subject]:
+		for sample in SAM_RNASEQ[subject]:
 			TARGET    +=  [subject+"/"+TIME+"/"+sample+"/HLA/seq2HLA/"+sample+"-ClassI.HLAgenotype4digits"]
 			TARGET    +=  [subject+"/"+TIME+"/"+sample+"/HLA/HLAminer/HLAminer_HPTASR.csv"]
 			TARGET    +=  [subject+"/"+TIME+"/"+sample+"/HLA/"+sample+".Calls.txt"]

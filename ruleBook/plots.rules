@@ -16,13 +16,15 @@ for subject in config['subject'].keys():
         if config['sample_captures'][s] not in config['Panel_List']:
             LOH_files.append(s)
     LOH_Circos[subject] = ["{subject}/{TIME}/{sample}/qc/{sample}.bwa.loh".format(TIME=TIME, subject=SAMPLE_TO_SUBJECT[s], sample=lib) for lib in LOH_files]
+
 if 'RNASeq' in config:
     for subject in config['RNASeq'].keys():
+        #if statement checks if a DNA library exists for this subject. That implies the LOH_Circos data structure already exists.
         if subject in config['subject'].keys():
-            LOH_Circos[subject] += ["{subject}/{TIME}/{sample}/qc/{sample}.star.loh".format(TIME=TIME, subject=SUB2RNA[s], sample=s) for s in config['RNASeq'][subject]]
+            LOH_Circos[subject] += ["{subject}/{TIME}/{sample}/qc/{sample}.star.loh".format(TIME=TIME, subject=SUB2RNA[s], sample=s) for s in SAM_RNASEQ[subject]]
         else:
             LOH_Circos[subject] = []
-            LOH_Circos[subject] += ["{subject}/{TIME}/{sample}/qc/{sample}.star.loh".format(TIME=TIME, subject=SUB2RNA[s], sample=s) for s in config['RNASeq'][subject]]
+            LOH_Circos[subject] += ["{subject}/{TIME}/{sample}/qc/{sample}.star.loh".format(TIME=TIME, subject=SUB2RNA[s], sample=s) for s in SAM_RNASEQ[subject]]
 
 
 ############

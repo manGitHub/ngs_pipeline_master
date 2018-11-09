@@ -44,6 +44,8 @@
 	"conpair"		: "10102016",
 	"cnvkit"		: "0.9.3",
 	"pvacseq"		: "4.0.6",
+	"mixcr"			: "2.1.12",
+	"java8_11"		: "1.8.0_11",
 	"Actionable_mutation"	: "Actionable.v3.pl",
 	"Actionable_fusion"	: "ActionableFusion.v1.pl",
 	"Panel_List"		: ["clin.snv.v1", "clin.cnv.v2", "clin.snv.v2", "nbl.panel", "seqcapez.rms.v1", "nbl.somatic.panel"],
@@ -82,5 +84,6 @@
 		"clin.snv.v2"	:{"Normal":"20","Tumor":"50","VAF":"0.05"},
 		"seqcapez.rms.v1"	:{"Normal":"20","Tumor":"50","VAF":"0.1"},
 		"wholegenome"	:{"Normal":"5","Tumor":"5","VAF":"0.1"}
-	}
+	},
+	"exclude_from_rnaseq"            : ["smarter.tcr"]
 }
