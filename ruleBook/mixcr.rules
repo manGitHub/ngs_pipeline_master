@@ -53,26 +53,26 @@ rule mixcr_RNASeq:
 
     module load vdjtools/1.1.10
     module load R/{params.R}
-    java -Djava.io.tmpdir=${{LOCAL}} -jar $vdjtools_jar Convert -S mixcr {wildcards.sample}.clones.RNA.txt convert
-    java -Djava.io.tmpdir=${{LOCAL}} -jar $vdjtools_jar Convert -S mixcr {wildcards.sample}.clones.TRA.txt convert
-    java -Djava.io.tmpdir=${{LOCAL}} -jar $vdjtools_jar Convert -S mixcr {wildcards.sample}.clones.TRB.txt convert
-    java -Djava.io.tmpdir=${{LOCAL}} -jar $vdjtools_jar Convert -S mixcr {wildcards.sample}.clones.IGH.txt convert
-    java -Djava.io.tmpdir=${{LOCAL}} -jar $vdjtools_jar Convert -S mixcr {wildcards.sample}.clones.IGK.txt convert
-    java -Djava.io.tmpdir=${{LOCAL}} -jar $vdjtools_jar Convert -S mixcr {wildcards.sample}.clones.IGL.txt convert
+    java -Djava.io.tmpdir=${{LOCAL}} -jar $VDJ_JAR Convert -S mixcr {wildcards.sample}.clones.RNA.txt convert
+    java -Djava.io.tmpdir=${{LOCAL}} -jar $VDJ_JAR Convert -S mixcr {wildcards.sample}.clones.TRA.txt convert
+    java -Djava.io.tmpdir=${{LOCAL}} -jar $VDJ_JAR Convert -S mixcr {wildcards.sample}.clones.TRB.txt convert
+    java -Djava.io.tmpdir=${{LOCAL}} -jar $VDJ_JAR Convert -S mixcr {wildcards.sample}.clones.IGH.txt convert
+    java -Djava.io.tmpdir=${{LOCAL}} -jar $VDJ_JAR Convert -S mixcr {wildcards.sample}.clones.IGK.txt convert
+    java -Djava.io.tmpdir=${{LOCAL}} -jar $VDJ_JAR Convert -S mixcr {wildcards.sample}.clones.IGL.txt convert
 
-    java -Djava.io.tmpdir=${{LOCAL}} -jar $vdjtools_jar CalcBasicStats convert.{wildcards.sample}.clones.RNA.txt {wildcards.sample}.RNA
-    java -Djava.io.tmpdir=${{LOCAL}} -jar $vdjtools_jar CalcBasicStats convert.{wildcards.sample}.clones.TRA.txt {wildcards.sample}.TRA
-    java -Djava.io.tmpdir=${{LOCAL}} -jar $vdjtools_jar CalcBasicStats convert.{wildcards.sample}.clones.TRB.txt {wildcards.sample}.TRB
-    java -Djava.io.tmpdir=${{LOCAL}} -jar $vdjtools_jar CalcBasicStats convert.{wildcards.sample}.clones.IGH.txt {wildcards.sample}.IGH
-    java -Djava.io.tmpdir=${{LOCAL}} -jar $vdjtools_jar CalcBasicStats convert.{wildcards.sample}.clones.IGK.txt {wildcards.sample}.IGK
-    java -Djava.io.tmpdir=${{LOCAL}} -jar $vdjtools_jar CalcBasicStats convert.{wildcards.sample}.clones.IGL.txt {wildcards.sample}.IGL
+    java -Djava.io.tmpdir=${{LOCAL}} -jar $VDJ_JAR CalcBasicStats convert.{wildcards.sample}.clones.RNA.txt {wildcards.sample}.RNA
+    java -Djava.io.tmpdir=${{LOCAL}} -jar $VDJ_JAR CalcBasicStats convert.{wildcards.sample}.clones.TRA.txt {wildcards.sample}.TRA
+    java -Djava.io.tmpdir=${{LOCAL}} -jar $VDJ_JAR CalcBasicStats convert.{wildcards.sample}.clones.TRB.txt {wildcards.sample}.TRB
+    java -Djava.io.tmpdir=${{LOCAL}} -jar $VDJ_JAR CalcBasicStats convert.{wildcards.sample}.clones.IGH.txt {wildcards.sample}.IGH
+    java -Djava.io.tmpdir=${{LOCAL}} -jar $VDJ_JAR CalcBasicStats convert.{wildcards.sample}.clones.IGK.txt {wildcards.sample}.IGK
+    java -Djava.io.tmpdir=${{LOCAL}} -jar $VDJ_JAR CalcBasicStats convert.{wildcards.sample}.clones.IGL.txt {wildcards.sample}.IGL
 
-    java -Djava.io.tmpdir=${{LOCAL}} -jar $vdjtools_jar PlotFancyVJUsage convert.{wildcards.sample}.clones.RNA.txt {wildcards.sample}.RNA
-    java -Djava.io.tmpdir=${{LOCAL}} -jar $vdjtools_jar PlotFancyVJUsage convert.{wildcards.sample}.clones.TRA.txt {wildcards.sample}.TRA
-    java -Djava.io.tmpdir=${{LOCAL}} -jar $vdjtools_jar PlotFancyVJUsage convert.{wildcards.sample}.clones.TRB.txt {wildcards.sample}.TRB
-    java -Djava.io.tmpdir=${{LOCAL}} -jar $vdjtools_jar PlotFancyVJUsage convert.{wildcards.sample}.clones.IGH.txt {wildcards.sample}.IGH
-    java -Djava.io.tmpdir=${{LOCAL}} -jar $vdjtools_jar PlotFancyVJUsage convert.{wildcards.sample}.clones.IGK.txt {wildcards.sample}.IGK
-    java -Djava.io.tmpdir=${{LOCAL}} -jar $vdjtools_jar PlotFancyVJUsage convert.{wildcards.sample}.clones.IGL.txt {wildcards.sample}.IGL
+    java -Djava.io.tmpdir=${{LOCAL}} -jar $VDJ_JAR PlotFancyVJUsage convert.{wildcards.sample}.clones.RNA.txt {wildcards.sample}.RNA
+    java -Djava.io.tmpdir=${{LOCAL}} -jar $VDJ_JAR PlotFancyVJUsage convert.{wildcards.sample}.clones.TRA.txt {wildcards.sample}.TRA
+    java -Djava.io.tmpdir=${{LOCAL}} -jar $VDJ_JAR PlotFancyVJUsage convert.{wildcards.sample}.clones.TRB.txt {wildcards.sample}.TRB
+    java -Djava.io.tmpdir=${{LOCAL}} -jar $VDJ_JAR PlotFancyVJUsage convert.{wildcards.sample}.clones.IGH.txt {wildcards.sample}.IGH
+    java -Djava.io.tmpdir=${{LOCAL}} -jar $VDJ_JAR PlotFancyVJUsage convert.{wildcards.sample}.clones.IGK.txt {wildcards.sample}.IGK
+    java -Djava.io.tmpdir=${{LOCAL}} -jar $VDJ_JAR PlotFancyVJUsage convert.{wildcards.sample}.clones.IGL.txt {wildcards.sample}.IGL
 
     head -n1 {wildcards.sample}.RNA.basicstats.txt > {wildcards.sample}.summarystats.RNA.txt
     cat {wildcards.sample}.TRA.basicstats.txt {wildcards.sample}.TRB.basicstats.txt {wildcards.sample}.IGH.basicstats.txt {wildcards.sample}.IGK.basicstats.txt {wildcards.sample}.IGL.basicstats.txt | grep -v sample_id >> {wildcards.sample}.summarystats.RNA.txt
@@ -115,17 +115,17 @@ rule mixcr_TCRSeq:
 
     module load vdjtools/1.1.10
     module load R/{params.R}
-    java -Djava.io.tmpdir=${{LOCAL}} -jar $vdjtools_jar Convert -S mixcr {wildcards.sample}.clones.TCR.txt convert
-    java -Djava.io.tmpdir=${{LOCAL}} -jar $vdjtools_jar Convert -S mixcr {wildcards.sample}.clones.TRA.txt convert
-    java -Djava.io.tmpdir=${{LOCAL}} -jar $vdjtools_jar Convert -S mixcr {wildcards.sample}.clones.TRB.txt convert
+    java -Djava.io.tmpdir=${{LOCAL}} -jar $VDJ_JAR Convert -S mixcr {wildcards.sample}.clones.TCR.txt convert
+    java -Djava.io.tmpdir=${{LOCAL}} -jar $VDJ_JAR Convert -S mixcr {wildcards.sample}.clones.TRA.txt convert
+    java -Djava.io.tmpdir=${{LOCAL}} -jar $VDJ_JAR Convert -S mixcr {wildcards.sample}.clones.TRB.txt convert
 
-    java -Djava.io.tmpdir=${{LOCAL}} -jar $vdjtools_jar CalcBasicStats convert.{wildcards.sample}.clones.TCR.txt {wildcards.sample}.TCR
-    java -Djava.io.tmpdir=${{LOCAL}} -jar $vdjtools_jar CalcBasicStats convert.{wildcards.sample}.clones.TRA.txt {wildcards.sample}.TRA
-    java -Djava.io.tmpdir=${{LOCAL}} -jar $vdjtools_jar CalcBasicStats convert.{wildcards.sample}.clones.TRB.txt {wildcards.sample}.TRB
+    java -Djava.io.tmpdir=${{LOCAL}} -jar $VDJ_JAR CalcBasicStats convert.{wildcards.sample}.clones.TCR.txt {wildcards.sample}.TCR
+    java -Djava.io.tmpdir=${{LOCAL}} -jar $VDJ_JAR CalcBasicStats convert.{wildcards.sample}.clones.TRA.txt {wildcards.sample}.TRA
+    java -Djava.io.tmpdir=${{LOCAL}} -jar $VDJ_JAR CalcBasicStats convert.{wildcards.sample}.clones.TRB.txt {wildcards.sample}.TRB
 
-    java -Djava.io.tmpdir=${{LOCAL}} -jar $vdjtools_jar PlotFancyVJUsage convert.{wildcards.sample}.clones.TCR.txt {wildcards.sample}.TCR
-    java -Djava.io.tmpdir=${{LOCAL}} -jar $vdjtools_jar PlotFancyVJUsage convert.{wildcards.sample}.clones.TRA.txt {wildcards.sample}.TRA
-    java -Djava.io.tmpdir=${{LOCAL}} -jar $vdjtools_jar PlotFancyVJUsage convert.{wildcards.sample}.clones.TRB.txt {wildcards.sample}.TRB
+    java -Djava.io.tmpdir=${{LOCAL}} -jar $VDJ_JAR PlotFancyVJUsage convert.{wildcards.sample}.clones.TCR.txt {wildcards.sample}.TCR
+    java -Djava.io.tmpdir=${{LOCAL}} -jar $VDJ_JAR PlotFancyVJUsage convert.{wildcards.sample}.clones.TRA.txt {wildcards.sample}.TRA
+    java -Djava.io.tmpdir=${{LOCAL}} -jar $VDJ_JAR PlotFancyVJUsage convert.{wildcards.sample}.clones.TRB.txt {wildcards.sample}.TRB
 
     head -n1 {wildcards.sample}.TCR.basicstats.txt > {wildcards.sample}.summarystats.TCR.txt
     cat {wildcards.sample}.TRA.basicstats.txt {wildcards.sample}.TRB.basicstats.txt | grep -v sample_id >> {wildcards.sample}.summarystats.TCR.txt
