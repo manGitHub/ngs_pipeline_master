@@ -48,7 +48,7 @@
 	"java8_11"		: "1.8.0_11",
 	"Actionable_mutation"	: "Actionable.v3.pl",
 	"Actionable_fusion"	: "ActionableFusion.v1.pl",
-	"Panel_List"		: ["clin.snv.v1", "clin.cnv.v2", "clin.snv.v2", "nbl.panel", "seqcapez.rms.v1", "nbl.somatic.panel"],
+	"Panel_List"		: ["clin.snv.v1", "clin.cnv.v2", "clin.snv.v2", "nbl.panel", "seqcapez.rms.v1", "nbl.somatic.panel", "panel_paed_v5_w5.1"],
 	"failed_exon_params": {
 		"wholegenome"		:{"Normal":"5","Tumor":"5"},
 		"seqcapez.hu.ex.v3"	:{"Normal":"20","Tumor":"20"},
@@ -73,6 +73,7 @@
 		"sureselect.exon.v5_utr":{"Normal":"20","Tumor":"20"},
 		"sureselect.exon.v6"	:{"Normal":"20","Tumor":"20"},
 		"mayo_v5_urt"           :{"Normal":"20","Tumor":"20"},
+		"panel_paed_v5_w5.1"	:{"Normal":"20","Tumor":"50"},
 		"idt.xgen.exome.res"	:{"Normal":"10","Tumor":"20"}
 	},
 	"capture_list_for_mutationBurden_calc"	: ["clin.ex.v1", "clin.snv.v1", "clin.snv.v2", "seqcapez.hu.ex.v3", "seqcapez.hu.ex.utr.v1", "seqcapez.rms.v1", "wholegenome"],
