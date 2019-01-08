@@ -197,8 +197,7 @@ for subject in config['subject'].keys():
 for subject in config['subject']:
 	local  = []
 	for sample in config['subject'][subject]:
-		local.extend([(subject+"/"+TIME+"/"+sample+"/calls/"+sample+".HC_DNASeq.snpEff.txt"),
-			      (subject+"/"+TIME+"/"+sample+"/calls/"+sample+".Platypus.snpEff.txt")
+		local.extend([(subject+"/"+TIME+"/"+sample+"/calls/"+sample+".HC_DNASeq.snpEff.txt")	      
 			    ])
 	if subject not in SUBJECT_VCFS:
 		SUBJECT_VCFS[subject] = local

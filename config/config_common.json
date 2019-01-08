@@ -76,7 +76,7 @@
 		"panel_paed_v5_w5.1"	:{"Normal":"20","Tumor":"50"},
 		"idt.xgen.exome.res"	:{"Normal":"10","Tumor":"20"}
 	},
-	"capture_list_for_mutationBurden_calc"	: ["clin.ex.v1", "clin.snv.v1", "clin.snv.v2", "seqcapez.hu.ex.v3", "seqcapez.hu.ex.utr.v1", "seqcapez.rms.v1", "wholegenome"],
+	"capture_list_for_mutationBurden_calc"	: ["clin.ex.v1", "clin.snv.v1", "clin.snv.v2", "seqcapez.hu.ex.v3", "seqcapez.hu.ex.utr.v1", "seqcapez.rms.v1", "panel_paed_v5_w5.1", "wholegenome"],
 	"high_conf_somatic_threshold" : {
 		"clin.ex.v1"	:{"Normal":"20","Tumor":"20","VAF":"0.1"},
 		"seqcapez.hu.ex.v3"	:{"Normal":"20","Tumor":"20","VAF":"0.1"},
