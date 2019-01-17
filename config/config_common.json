@@ -84,6 +84,7 @@
 		"clin.snv.v1"	:{"Normal":"20","Tumor":"50","VAF":"0.05"},
 		"clin.snv.v2"	:{"Normal":"20","Tumor":"50","VAF":"0.05"},
 		"seqcapez.rms.v1"	:{"Normal":"20","Tumor":"50","VAF":"0.1"},
+		"panel_paed_v5_w5.1"    :{"Normal":"20","Tumor":"20","VAF":"0.1"},
 		"wholegenome"	:{"Normal":"5","Tumor":"5","VAF":"0.1"}
 	},
 	"exclude_from_rnaseq"            : ["smarter.tcr"]
