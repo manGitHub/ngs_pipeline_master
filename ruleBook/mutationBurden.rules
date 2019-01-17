@@ -22,7 +22,7 @@ rule MutationBurden:
                 txt="{subject}/{TIME}/{sample}/qc/{base}.mutationburden.txt"
         version: "1.0"
         params:
-                rulename   = "mutationBurden",
+                rulename   = "MutationBurden",
                 batch      = config[config['host']]["job_addbackann"],
                 tumor_cov   = lambda wildcards: config['high_conf_somatic_threshold'][capture_kit[wildcards.sample]]['Tumor'],
                 normal_cov  = lambda wildcards: config['high_conf_somatic_threshold'][capture_kit[wildcards.sample]]['Normal'],

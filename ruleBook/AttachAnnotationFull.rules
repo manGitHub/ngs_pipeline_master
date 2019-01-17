@@ -12,7 +12,7 @@ rule AttachAnnotationFull:
             txt="{subject}/{TIME}/{base1}/calls/{base}.annotatedFull.txt"
         version: "1.0"
         params:
-            rulename   = "addFull",
+            rulename   = "AttachAnnotationFull",
             batch      = config[config['host']]["job_addbackann"],
         shell: """
         #######################

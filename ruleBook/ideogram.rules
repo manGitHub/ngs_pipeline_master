@@ -13,7 +13,7 @@ rule Ideogram:
 		v2="{subject}/{TIME}/{Tumor}/copyNumber/{Tumor}.CN.png",
 	version: config["version_R"]
 	params:
-		rulename = "ideogram",
+		rulename = "Ideogram",
 		bedtools = config['bedtools'],
 		batch    = config[config['host']]["job_default"],
 		genome   = config["reference"].replace('.fasta', '.genome'),

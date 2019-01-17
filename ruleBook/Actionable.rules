@@ -16,7 +16,7 @@ rule Actionable_Somatic:
 	output:
 		somatic="{subject}/{TIME}/{ACT_DIR}{subject}.somatic.actionable.txt",
 	params:
-		rulename  = "ActionableMutations",
+		rulename  = "Actionable_Somatic",
 		batch    = config[config['host']]['job_default']
 	shell: """
 	#######################
@@ -38,7 +38,7 @@ rule Actionable_Germline:
 	output:
 		germline="{subject}/{TIME}/{ACT_DIR}{subject}.germline.actionable.txt",
 	params:
-		rulename = "ActionableMutations",
+		rulename = "Actionable_Germline",
 		batch    = config[config['host']]['job_default'],
 		status   = lambda wildcards: DECIDE_GL[wildcards.subject]
 	shell: """
@@ -77,7 +77,7 @@ rule Actionable_RNAseq:
 	output:
 		rnaseq="{subject}/{TIME}/{ACT_DIR}{subject}.rnaseq.actionable.txt",
 	params:
-		rulename  = "ActionableMutations",
+		rulename  = "Actionable_RNAseq",
 		batch    = config[config['host']]['job_default']
 	shell: """
 	#######################
@@ -103,7 +103,7 @@ rule Actionable_Variants:
 	output:
 		rnaseq="{subject}/{TIME}/{ACT_DIR}{subject}.variants.actionable.txt",
 	params:
-		rulename  = "ActionableMutations",
+		rulename  = "Actionable_Variants",
 		batch    = config[config['host']]['job_default']
 	shell: """
 	#######################

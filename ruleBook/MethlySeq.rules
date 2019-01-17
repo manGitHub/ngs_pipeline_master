@@ -21,7 +21,7 @@ rule Bismark:
 		"{base}/{TIME}/{sample}/{sample}_pe.bam",
 	version: config["bismark"]
 	params:
-		rulename  = "bismark",
+		rulename  = "Bismark",
 		platform  = config["platform"],
 		samtools  = config["samtools"],
 		batch     = config[config['host']]["job_bismark"]
@@ -45,7 +45,7 @@ rule BisDedup:
 		"{base}/{TIME}/{sample}/{sample}_pe.deduplicated.bam"
 	version: config["bismark"]
 	params:
-		rulename  = "bisdedup",
+		rulename  = "BisDedup",
 		samtools  = config["samtools"],
 		batch     = config[config['host']]["job_bismark"]
 	shell: """
@@ -65,7 +65,7 @@ rule BismarkMethExt:
 		"{base}/{TIME}/{sample}/{sample}_pe.deduplicated.CpG_report.txt.gz",
 	version: config["bismark"]
 	params:
-		rulename  = "BisMetExt",
+		rulename  = "BismarkMethExt",
 		samtools  = config["samtools"],
 		batch     = config[config['host']]["job_bismark"]
 	shell: """
@@ -84,7 +84,7 @@ rule bam2nuc:
 	output: "{base}/{TIME}/{sample}/{sample}.nucleotide_stats.txt"
 	version: config["bismark"]
 	params:
-		rulename  = "BisBam2Nuc",
+		rulename  = "bam2nuc",
 		samtools  = config["samtools"],
 		batch     = config[config['host']]["job_bismark"],
 		ref=config["BismarkIndex"]

@@ -330,7 +330,7 @@ rule Khanlab_Pipeline:
 	wildcard_constraints:
 		NOW="\w+"
 	params:
-		rulename = "Final",
+		rulename = "Khanlab_Pipeline",
 		batch    = config[config['host']]["job_default"],
 		group    = config["group"],
 		mail 	 = NGS_PIPELINE + "/scripts/tsv2html.final.sh",
@@ -360,7 +360,7 @@ rule Khanlab_Pipeline:
 rule makeConfig:
 	output:	"{subject}/{TIME}/qc/{subject}.config." + NOW + ".txt" 
 	params:
-		rulename = "configPrint",
+		rulename = "makeConfig",
 		batch    = config[config['host']]["job_default"],
 		hash     = json.dumps(config, sort_keys=True)
 	shell: """
@@ -377,7 +377,7 @@ rule MergeFQ:
 		R1 = temp("{base}/{TIME}/FQ/{sample}_R1.fastq.gz"),
 		R2 = temp("{base}/{TIME}/FQ/{sample}_R2.fastq.gz")
 	params:
-		rulename = "mergeFQ",
+		rulename = "MergeFQ",
 		batch    = config[config['host']]["job_default"],
 		work_dir =  WORK_DIR
 	shell: """
@@ -408,7 +408,7 @@ rule FASTQC:
 		"{base}/{TIME}/{sample}/qc/fastqc/{sample}_R2_fastqc.html"
 	version: config["fastqc"]
 	params:
-		rulename  = "fastqc",
+		rulename  = "FASTQC",
 		batch     = config[config['host']]["job_fastqc"]
 	shell: """
 	#######################
@@ -439,7 +439,7 @@ rule BWA:
 		temp("{base}/{TIME}/{sample}/{sample}.bwa.bam.bai")
 	version: config["bwa"]
 	params:
-		rulename  = "bwa",
+		rulename  = "BWA",
 		platform  = config["platform"],
 		samtools  = config["samtools"],
 		batch     = config[config['host']]["job_bwa"]
@@ -468,7 +468,7 @@ rule NOVOALIGN:
 	version: config["novocraft"]
 	resources: novoalign=1
 	params:
-		rulename  = "novoalign",
+		rulename  = "NOVOALIGN",
 		batch     = config[config['host']]["job_novoalign"],
 		samtools  = config["samtools"],
 		platform  = config["platform"]
@@ -498,7 +498,7 @@ rule GENOTYPING:
 		loh="{base}/{TIME}/{sample}/qc/{sample}.{aligner}.loh"
 	version: config["samtools_old"]
 	params:
-		rulename  = "genotype",
+		rulename  = "GENOTYPING",
 		batch     = config[config['host']]["job_genotype"],
 		dest	  = config["genotypeDest"],
 		host	  = config["host"]
@@ -565,7 +565,7 @@ rule BamQC:
 		"{base}/{TIME}/{sample}/qc/BamQC/qualimapReport.html"
 	version: config["qualimap"]
 	params:
-		rulename = "bamqc",
+		rulename = "BamQC",
 		batch	 = config[config['host']]["job_qualimap"],
 		outdir	 ="{base}/{TIME}/{sample}/qc/BamQC",
 	shell: """
@@ -585,7 +585,7 @@ rule QC_Sum:
 		"QC_AllSamples.txt"
 	version: "v1.1"
 	params:
-		rulename = "qc_sum",
+		rulename = "QC_Sum",
 		batch    = config[config['host']]['job_default']
 	shell: """
 	#######################
@@ -600,7 +600,7 @@ rule FLAGSTAT:
 	output: "{base}/{TIME}/{sample}/qc/{sample}.{aligner}.flagstat.txt"
 	version: config["samtools"]
 	params:
-		rulename  = "flagstat",
+		rulename  = "FLAGSTAT",
 		batch     = config[config['host']]["job_flagstat"]
 	shell: """
 	#######################
@@ -619,7 +619,7 @@ rule HotSpotCoverage:
 	output: "{base}/{TIME}/{sample}/qc/{sample}.{aligner}.hotspot.depth"
 	version: config["bedtools"]
 	params:
-		rulename  = "HotSpotCov",
+		rulename  = "HotSpotCoverage",
 		samtools  = config['samtools'],
 		batch     = config[config['host']]["job_hotspot"],
 	shell: """
@@ -642,7 +642,7 @@ rule Coverage:
 		"{subject}/{TIME}/{sample}/qc/{sample}.bwa.coverage.txt"
 	version: config["bedtools"]
 	params:
-		rulename = "coverage",
+		rulename = "Coverage",
 		batch    = config[config['host']]["job_bedtools"]
 	shell: """
 	#######################
@@ -658,7 +658,7 @@ rule IGV_Session:
 	output: "{subject}/{TIME}/igv/session_{subject}.xml"
 	message: "Making IGV session xml file for {wildcards.subject}"
 	params:
-		rulename = "igv_session",
+		rulename = "IGV_Session",
 		batch    = config[config['host']]["job_covplot"],
 		work_dir =  WORK_DIR
 	shell: """
@@ -690,7 +690,7 @@ rule Picard_MarkDup:
 		metrics="{subject}/{TIME}/{sample}/qc/{base}.markdup.txt"
 	version: config["picard"]
 	params:
-		rulename  = "mark_dup",
+		rulename  = "Picard_MarkDup",
 		batch     = config[config['host']]["job_markdup"],
 		samtools  = config["samtools"]
 	shell: """
@@ -712,7 +712,7 @@ rule CopyNovoBam:
 		bam="{base}/{TIME}/{sample}/{sample}.novo.final.bam",
 		bai="{base}/{TIME}/{sample}/{sample}.novo.final.bam.bai",
 	params:
-		rulename = "copy",
+		rulename = "CopyNovoBam",
 		batch    = config[config['host']]['job_default']
 	shell: """
 	#######################
@@ -736,7 +736,7 @@ rule GATK:
 		index="{base}/{TIME}/{sample}/{sample}.bwa.final.bam.bai",
 	version: config["GATK"]
 	params:
-		rulename  = "gatk",
+		rulename  = "GATK",
 		batch     = config[config['host']]["job_gatk"]
 	shell: """
 	#######################
@@ -834,7 +834,7 @@ rule SNPEff:
 		eff="{subject}/{TIME}/{sample}/calls/{base}.raw.snpEff.vcf"
 	version: config["snpEff"]
 	params:
-		rulename      ="snpEff",
+		rulename      ="SNPEff",
 		batch	      =config[config['host']]["job_snpeff"],
 		snpEff_genome =config["snpEff_genome"],
 		snpEff_config=NGS_PIPELINE + "/Tools_config/"+config["snpEff_config"],
@@ -855,7 +855,7 @@ rule VCF2TXT:
 	output:
 		txt="{subject}/{TIME}/{sample}/calls/{base}.snpEff.txt"
 	params:
-		rulename      ="vcf2txt",
+		rulename      ="VCF2TXT",
 		batch         =config[config['host']]["job_default"],
 		annovar       =config["annovar"]
 	shell: """
@@ -900,7 +900,7 @@ rule CopyAnnotationFile:
 		filtered="{subject}/{TIME}/annotation/{subject}.Annotations.coding.rare.txt",
 		all="{subject}/{TIME}/annotation/{subject}.Annotations.final.txt"
 	params:
-		rulename   = "caf",
+		rulename   = "CopyAnnotationFile",
 		batch      = config[config['host']]["job_default"],
 	shell: """
 	#######################
@@ -920,7 +920,7 @@ rule AttachAnnotation:
 		txt="{subject}/{TIME}/{base1}/calls/{base}.annotated.txt",
 	version: "1.0"
 	params:
-		rulename   = "add",
+		rulename   = "AttachAnnotation",
 		batch      = config[config['host']]["job_addbackann"],
 	shell: """
 	#######################
@@ -959,7 +959,7 @@ rule DBinput:
 		txtFiles1=lambda wildcards: SUBJECT_VCFS[wildcards.subject]
 	output: "{subject}/{TIME}/{subject}/db/{subject}.{group}"
 	params:
-		rulename = "makeDBinput",
+		rulename = "DBinput",
 		batch    = config[config['host']]['job_default'],
 		hash 	 = lambda wc: " ".join("{} {}".format(a, b) for a, b in config["sample_type"].items()),
 		hash1	 = lambda wc: " ".join("{} {}".format(a, b) for a, b in config["sample_captures"].items()),

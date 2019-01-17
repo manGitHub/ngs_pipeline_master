@@ -45,7 +45,7 @@ rule Annovar_Gene:
 		"{base}/AnnotationInput.gene"
 	version: config["annovar"]
 	params:
-		rulename   = "Annot_gene",
+		rulename   = "Annovar_Gene",
 		batch      = config[config['host']]["job_annovar"],
 		RefData    = config["annovar_data"],
 		build      = config["build"],
@@ -69,7 +69,7 @@ rule Annovar_Clinseq:
 	output: "{base}/AnnotationInput.clinseq"
 	version: config["annovar"]
 	params:
-		rulename   = "Annot_clinseq",
+		rulename   = "Annovar_Clinseq",
 		batch      = config[config['host']]["job_annot"],
 		RefData    = config["annovar_data"],
 		build      = config["build"],
@@ -95,7 +95,7 @@ rule Annovar_CADD:
 		"{base}/AnnotationInput.cadd",
 	version: config["annovar"]
 	params:
-		rulename   = "Annot_CADD",
+		rulename   = "Annovar_CADD",
 		batch      = config[config['host']]["job_annovar"],
 		RefData    = config["annovar_data"],
 		build      = config["build"],
@@ -122,7 +122,7 @@ rule Annovar_COSMIC:
 		"{base}/AnnotationInput.cosmic",
 	version: config["annovar"]
 	params:
-		rulename   = "Annot_COSMIC",
+		rulename   = "Annovar_COSMIC",
 		batch      = config[config['host']]["job_annot"],
 		RefData    = config["annovar_data"],
 		build      = config["build"],
@@ -146,7 +146,7 @@ rule Annovar_PCG:
 		"{base}/AnnotationInput.pcg",
 	version: config["annovar"]
 	params:
-		rulename   = "Annot_PCG",
+		rulename   = "Annovar_PCG",
 		batch      = config[config['host']]["job_annot"],
 		RefData    = config["annovar_data"],
 		build      = config["build"],
@@ -186,7 +186,7 @@ rule Annot_Custom:
 		civic  ="{base}/AnnotationInput.civic"	
 	version: config["annovar"]
 	params:
-		rulename   = "Annot_PCG",
+		rulename   = "Annot_Custom",
 		batch      = config[config['host']]["job_annot"],
 		RefData    = config["annovar_data"],
 		build      = config["build"],
@@ -266,7 +266,7 @@ rule CombineAnnotation:
 		all	="{base}/AnnotationInput.annotations.final.txt"
 	version: "1.0"
 	params:
-		rulename   = "combine",
+		rulename   = "CombineAnnotation",
 		batch	   = config[config['host']]["job_Combine"]
 	shell: """
 	#######################

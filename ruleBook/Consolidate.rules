@@ -23,7 +23,7 @@ rule QC:
         version:
                 config['samtools']
         params:
-                rulename        = "consolidated_QC",
+                rulename        = "QC",
                 bedtools        = config['bedtools'],
 		python		= config["version_python"],
 		tool_perl       = NGS_PIPELINE+ "/scripts/addAttributes.pl",
@@ -46,7 +46,7 @@ rule QC_Summary_Patient:
 	input : lambda wildcards: SUB_CON_QC[wildcards.subject]
 	output: "{subject}/{TIME}/qc/{subject}.consolidated_QC.txt"
 	params:
-		rulename  = "QC_Sum",
+		rulename  = "QC_Summary_Patient",
 		batch     = config[config['host']]["job_default"]
 	shell: """
 	#######################
@@ -61,7 +61,7 @@ rule QC_Summary:
 	input : CON_QC
 	output: "Consolidated_QC.txt"
 	params:
-		rulename  = "QC_Sum",
+		rulename  = "QC_Summary",
 		batch	  = config[config['host']]["job_default"]
 	shell: """
 	#######################

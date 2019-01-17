@@ -10,7 +10,7 @@ rule STAR_TPM:
 		temp("{subject}/{TIME}/{sample}/{sample}.star_UCSC.bam.bai")
 	version: config["STAR"]
 	params:
-		rulename  = "STAR",
+		rulename  = "STAR_TPM",
 		batch     = config[config['host']]['job_STAR_TPM'],
 		star_ref  = config['STAR_2.5.3a'],
 		home      = WORK_DIR,
@@ -145,7 +145,7 @@ rule RNASeQC_star:
 	output: "{base}/{TIME}/{sample}/qc/rnaseqc/report.html"
 	version: config["rnaseqc"],
 	params:
-		rulename="RNAseQC_star",
+		rulename="RNASeQC_star",
 		R	=config['version_R'],
 		picard	=config["picard"],
 		batch	= config[config['host']]["job_STAR"],
@@ -177,7 +177,7 @@ rule FeatureCounts:
 		"{base}/{TIME}/{sample}/TPM_{gtf}/{sample}.exon.TPM.txt",
 	version: config['version_R']
 	params:
-		rulename   = "featureCounts",
+		rulename   = "FeatureCounts",
 		batch      =config[config['host']]['job_featCount'],
 		work_dir =  WORK_DIR
 	shell: """
@@ -201,7 +201,7 @@ rule STARucsc:
 		temp("{subject}/{TIME}/{sample}/{sample}.UCSC_transcriptome.bam"),	
 	version: config["STAR"]	
 	params:
-		rulename  = "STAR-UCSC",
+		rulename  = "STARucsc",
 		batch     = config[config['host']]['job_STAR_TPM'],
 		star_ucsc_ref  = config['star_2.5.3a_ucsc'],
 		home	 = WORK_DIR,
@@ -229,7 +229,7 @@ rule RSEMucsc:
 		"{subject}/{TIME}/{sample}/RSEM_UCSC/{sample}.rsem_UCSC.isoforms.results"
 	version: config["rsem"],
 	params:
-		rulename = "rsem_ucsc",
+		rulename = "RSEMucsc",
 		ref	 = config['rsem_ucsc_ref'],
 		batch     = config[config['host']]['job_STAR'],
 		home	  = WORK_DIR,
@@ -260,7 +260,7 @@ rule STARens:
 	version:
 		config["STAR"]
 	params:
-		rulename = "STAR-ENS",
+		rulename = "STARens",
 		samtools = config['samtools'],
 		batch    = config[config['host']]['job_STAR_TPM'],
 		star_ens_ref  = config['star_2.5.3a_ens'],
@@ -324,7 +324,7 @@ rule RSEMens:
 		"{subject}/{TIME}/{sample}/RSEM_ENS/{sample}.rsem_ENS.isoforms.results",
 	version: config["rsem"],
 	params:
-		rulename = "rsem_ens",
+		rulename = "RSEMens",
 		ref      = config['rsem_ens_ref'],
 		batch    = config[config['host']]['job_STAR'],
 		home     = WORK_DIR,

@@ -133,7 +133,7 @@ rule pVACseq:
 		"{base}/{TIME}/{sample}/NeoAntigen/MHC_Class_I/{sample}.final.tsv"
 	version: config['pvacseq']
 	params:
-		rulename = "pVACSeq",
+		rulename = "pVACseq",
 		python   = config["version_python"],
 		normal   = lambda wildcards: config['sample_references'][wildcards.sample][0],
 		tool 	 = NGS_PIPELINE + "/scripts/process_pVACSeq.pl",

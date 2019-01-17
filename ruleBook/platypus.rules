@@ -11,7 +11,7 @@ rule PLATYPUS:
 	version: config["platypus"]
 	log: "log/platypus.{subject}"
 	params:
-		rulename = "PLAT",
+		rulename = "PLATYPUS",
 		batch    = config[config['host']]["job_platypus"]
 	shell: """
 	#######################

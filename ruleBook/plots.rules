@@ -37,7 +37,7 @@ rule CoveragePlot:
 	output: "{subject}/{TIME}/qc/{subject}.coveragePlot.png",
 	version: config["version_R"]
 	params:
-		rulename = "covplot",
+		rulename = "CoveragePlot",
 		batch    = config[config['host']]["job_covplot"]
 	shell: """
 	#######################
@@ -79,7 +79,7 @@ rule BoxPlot_Hotspot:
 		"{subject}/{TIME}/qc/{subject}.hotspot_coverage.png",
 	version: config["version_R"]
 	params:
-		rulename = "Boxplot",
+		rulename = "BoxPlot_Hotspot",
 		batch    = config[config['host']]["job_covplot"]
 	shell: """
 	#######################

@@ -30,7 +30,7 @@ rule BAM2TDF:
 		"{base}/{TIME}/{sample}/{sample}.{aligner}.bam.tdf"
 	version: config['igvtools']
 	params:
-		rulename        = "bamtdf",
+		rulename        = "BAM2TDF",
 		ref             = config["reference"],
 		batch           = config[config['host']]['job_igvtools']
 	shell:  """

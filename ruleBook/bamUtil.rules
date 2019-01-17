@@ -15,7 +15,7 @@ rule bamUtil:
 	output: "{base}/{TIME}/{sample}/qc/{sample}.{aligner}.squeeze.done"
 	version: config["bamutil"]
 	params:
-		rulename  = "bamutil",
+		rulename  = "bamUtil",
 		samtools  = config['samtools'],
 		batch     = config[config['host']]["job_bamUtil"]
 	shell: """

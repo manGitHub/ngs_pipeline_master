@@ -17,7 +17,7 @@ rule cnvkitPooled:
 		"{base}/{TIME}/{sample}/cnvkit/{sample}.cns"
 	version: config["cnvkit"]
 	params:
-		rulename  = "cnvkitPool",
+		rulename  = "cnvkitPooled",
 		batch     = config[config['host']]["job_cnvkit"],
 	shell: """
 	#######################
@@ -41,7 +41,7 @@ rule cnvkitPaired:
 		"{base}/{TIME}/{sample}/cnvkit/{sample}.cnr"
 	version: config["cnvkit"]
 	params:
-		rulename  = "cnvkitPair",
+		rulename  = "cnvkitPaired",
 		batch     = config[config['host']]["job_cnvkit"],
 	shell: """
 	#######################

@@ -42,7 +42,7 @@ rule conpair_pile:
 		temp("{subject}/{TIME}/{sample}/qc/{sample}.conpair.mpileup")
 	version: config['conpair']
 	params:
-		rulename = "conpair_1",
+		rulename = "conpair_pile",
 		batch    = config[config['host']]["job_gatk"]
 	shell: """
 	#######################
@@ -61,7 +61,7 @@ rule conpair_concod:
 		"{subject}/{TIME}/{Tumor}/qc/{Tumor}.concod.txt"
 	version: config['conpair']
 	params:
-		rulename = "conpair_2",
+		rulename = "conpair_concod",
 		batch    = config[config['host']]["job_default"]
 	shell: """
 	#######################
@@ -80,7 +80,7 @@ rule conpair_conta:
 		"{subject}/{TIME}/{Tumor}/qc/{Tumor}.conta.txt"
 	version: config['conpair']
 	params: 
-		rulename = "conpair_3",
+		rulename = "conpair_conta",
 		batch    = config[config['host']]["job_default"],
 		normal   = lambda wildcards: config['sample_references'][wildcards.Tumor]
 	shell: """

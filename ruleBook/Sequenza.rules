@@ -27,7 +27,7 @@ rule PILE4SEQ:
 	output: temp("{base}/{TIME}/{sample}/{sample}.mpileup.gz")
 	version: config["samtools_old"]
 	params:
-		rulename  = "pile4seq",
+		rulename  = "PILE4SEQ",
 		batch     = config[config['host']]["job_Sequenza"],
 	shell: """
 	#######################
@@ -61,7 +61,7 @@ rule Sequenza:
 		bin=temp("{subject}/{TIME}/{Tumor}/sequenza/{Tumor}.seqz_small.gz")
 	version: config['pypy']
 	params:
-		rulename = "sequenza",
+		rulename = "Sequenza",
 		R	 = config["version_R"],
 		batch    = config[config['host']]['job_Sequenza']
 	shell: """
@@ -85,7 +85,7 @@ rule Sequenza_geneAnnot:
 		"{subject}/{TIME}/{Tumor}/sequenza/{Tumor}.txt"
 	version: config["bedtools"]
 	params:
-		rulename = "sequenza_1",
+		rulename = "Sequenza_geneAnnot",
 		batch    = config[config['host']]['job_Sequenza']
 	shell: """
 	#######################

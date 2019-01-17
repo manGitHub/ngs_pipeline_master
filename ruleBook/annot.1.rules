@@ -99,7 +99,7 @@ rule Annovar_Gene:
 		"AnnotationInput.gene"
 	version: config["annovar"]
 	params:
-		rulename   = "Annot_gene",
+		rulename   = "Annovar_Gene",
 		batch      = config[config['host']]["job_annovar"],
 		RefData    = config["annovar_data"],
 		build      = config["build"],
@@ -123,7 +123,7 @@ rule Annovar_Clinseq:
 	output: "AnnotationInput.clinseq"
 	version: config["annovar"]
 	params:
-		rulename   = "Annot_clinseq",
+		rulename   = "Annovar_Clinseq",
 		batch      = config[config['host']]["job_annovar"],
 		RefData    = config["annovar_data"],
 		build      = config["build"],
@@ -149,7 +149,7 @@ rule Annovar_CADD:
 		"AnnotationInput.cadd",
 	version: config["annovar"]
 	params:
-		rulename   = "Annot_CADD",
+		rulename   = "Annovar_CADD",
 		batch      = config[config['host']]["job_annovar"],
 		RefData    = config["annovar_data"],
 		build      = config["build"],
@@ -176,7 +176,7 @@ rule Annovar_COSMIC:
 		"AnnotationInput.cosmic",
 	version: config["annovar"]
 	params:
-		rulename   = "Annot_COSMIC",
+		rulename   = "Annovar_COSMIC",
 		batch      = config[config['host']]["job_annovar"],
 		RefData    = config["annovar_data"],
 		build      = config["build"],
@@ -200,7 +200,7 @@ rule Annovar_PCG:
 		"AnnotationInput.pcg",
 	version: config["annovar"]
 	params:
-		rulename   = "Annot_PCG",
+		rulename   = "Annovar_PCG",
 		batch      = config[config['host']]["job_annovar"],
 		RefData    = config["annovar_data"],
 		build      = config["build"],
@@ -240,7 +240,7 @@ rule Annot_Custom:
 		civic  ="AnnotationInput.civic"	
 	version: config["annovar"]
 	params:
-		rulename   = "Annot_Anno",
+		rulename   = "Annot_Custom",
 		batch      = config[config['host']]["job_annovar"],
 		RefData    = config["annovar_data"],
 		build      = config["build"],
@@ -319,7 +319,7 @@ rule CombineAnnotation:
 		all	="AnnotationInput.annotations.final.txt"
 	version: "1.0"
 	params:
-		rulename   = "combine",
+		rulename   = "CombineAnnotation",
 		batch	   = config[config['host']]["job_Combine"],
 		dataDir    = config["annovar_data"]
 	shell: """

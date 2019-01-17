@@ -14,7 +14,7 @@ rule Bam2MPG:
 		vcf="{subject}/{TIME}/{sample}/calls/{sample}.bam2mpg.raw.vcf"
 	version: config["bam2mpg"]
 	params:
-		rulename  = "bam2mpg",
+		rulename  = "Bam2MPG",
 		batch     = config[config['host']]["job_bam2mpg"],
 		samtools  = config["samtools"],
 		vcftools  = config["vcftools"],

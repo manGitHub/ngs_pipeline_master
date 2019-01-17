@@ -13,7 +13,7 @@ rule ReadDepth:
 		"{base}/{TIME}/{sample}/qc/{sample}.depth_per_base"
 	version: config['bedtools']
 	params:
-		rulename	= "readDepth",
+		rulename	= "ReadDepth",
 		R 		= config['version_R'],
 		samtools	= config['samtools'],
 		batch		= config[config['host']]["job_bedtools"]

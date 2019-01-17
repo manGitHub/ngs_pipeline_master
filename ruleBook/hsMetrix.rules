@@ -13,7 +13,7 @@ rule TargetIntervals:
 	version:
 		config['samtools']
 	params:
-		rulename = "targetIntervals",
+		rulename = "TargetIntervals",
 		batch	= config[config['host']]["job_default"],
 	shell:	"""
 	#######################
@@ -32,7 +32,7 @@ rule HSMetrics:
 		"{base}/{TIME}/{sample}/qc/{sample}.hsmetrics"
 	version: config['picard']
 	params:
-		rulename = "hsMetrics",
+		rulename = "HSMetrics",
 		reference = config["reference"],
 		batch	= config[config['host']]["job_hsMetrics"],
 	shell: """

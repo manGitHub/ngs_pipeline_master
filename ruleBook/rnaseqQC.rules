@@ -11,7 +11,7 @@ rule RNASeqQC:
 		pdf="{base}/{TIME}/{sample}/qc/{sample}.RnaSeqMetrics.pdf",
 	version: config["picard"]
 	params:
-		rulename  = "RnaSeqMetrics",
+		rulename  = "RNASeqQC",
 		R	  = config['version_R'],
 		batch     = config[config['host']]["job_markdup"],
 	shell: """
@@ -29,7 +29,7 @@ rule RNASeqQC1:
 		table="{base}/{TIME}/{sample}/qc/{sample}.AlignmentSummaryMetrics.txt",
 	version: config["picard"]
 	params:
-		rulename  ="RnaSeqMetrics",
+		rulename  ="RNASeqQC1",
 		batch     =config[config['host']]["job_markdup"],
 		ref       =config['Bowtie2Index'].replace('genome', 'genome.fa')
 	shell: """
@@ -47,7 +47,7 @@ rule RNASeqQC_1:
 	output:
 		"{base}/{TIME}/{sample}/qc/{sample}.RnaSeqQC.txt"
 	params:
-		rulename  = "RnaSeqMetrics",
+		rulename  = "RNASeqQC_1",
 		batch     = config[config['host']]["job_default"],
 		diagnosis = lambda wildcards: config['Diagnosis'][wildcards.sample]
 	shell: """
@@ -63,7 +63,7 @@ rule RNASeqQC_2:
 		plot="{subject}/{TIME}/qc/{subject}.transcriptCoverage.png"
 	version: config['version_R']
 	params:
-		rulename  = "QC_Sum",
+		rulename  = "RNASeqQC_2",
 		batch     = config[config['host']]["job_covplot"]
 	shell: """
 	#######################
@@ -78,7 +78,7 @@ rule RNASeqQC_3:
 	input : RNA_QC_ALL
 	output: "RnaSeqQC.txt"
 	params:
-		rulename  = "QC_Sum",
+		rulename  = "RNASeqQC_3",
 		batch     = config[config['host']]["job_default"]
 	shell: """
 	#######################

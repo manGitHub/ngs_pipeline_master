@@ -95,7 +95,7 @@ rule RNASeq:
 	wildcard_constraints:
                 NOW="\w+"	
 	params:
-		rulename  = "RNASeq_final",
+		rulename  = "RNASeq",
 		batch     = config[config['host']]["job_default"]
 
 	shell: """
@@ -115,7 +115,7 @@ rule TOPHAT:
 		temp("{base}/{TIME}/{sample}/tophat_{sample}/accepted_hits.bam.bai")
 	version: config["tophat"]
 	params:
-		rulename  = "tophat",
+		rulename  = "TOPHAT",
 		samtools  = config['samtools'],
 		batch     = config[config['host']]["job_tophat"],
 		ref=config['Bowtie2Index']
@@ -139,7 +139,7 @@ rule TOPHAT_LINK:
 		bam=temp("{base}/{TIME}/{sample}/{sample}.tophat.final.bam"),
 		bai=temp("{base}/{TIME}/{sample}/{sample}.tophat.final.bam.bai")
 	params:
-		rulename  = "tophat_link",
+		rulename  = "TOPHAT_LINK",
 		batch     = config[config['host']]["job_default"]
 	shell: """
 	#######################
@@ -161,7 +161,7 @@ rule TOPHAT_FUSION:
 		"{base}/{TIME}/{sample}/fusion/tophat-fusion.txt"
 	version: config["tophat"]
 	params:
-		rulename = "tp",
+		rulename = "TOPHAT_FUSION",
 		blast	 =config['version_blast'],
 		batch    =config[config['host']]['job_tophatPost'],
 		ref      =config['BowtieIndex'],
@@ -198,7 +198,7 @@ rule CUFFLINKS:
 		isoform_log="{base}/{TIME}/{sample}/cufflinks_{gtf}/isoforms.fpkm_tracking_log2"
 	version: config['cufflinks']
 	params:
-		rulename   = "cuff",
+		rulename   = "CUFFLINKS",
 		batch      =config[config['host']]['job_cufflinks']
 	shell: """
 	#######################
@@ -217,7 +217,7 @@ rule Cuff_Mat:
 	output:
 		"{base}/{TIME}/{base}/db/matrixInput_{sample}_{gtf}"
 	params:
-		rulename  ="cuff_1",
+		rulename  ="Cuff_Mat",
 		batch     =config[config['host']]['job_default'],
 		diagnosis =lambda wildcards: config['Diagnosis'][wildcards.sample],
 		library   =lambda wildcards: config['sample_captures'][wildcards.sample]
@@ -240,7 +240,7 @@ rule EXON_EXP_UCSC:
 		ucsc="{base}/{TIME}/{sample}/exonExp_UCSC/{sample}.exonExpression.UCSC.txt"
 	version: config['samtools']
 	params:
-		rulename   = "exonExp.1",
+		rulename   = "EXON_EXP_UCSC",
 		batch      =config[config['host']]['job_exonExp']
 	shell: """
 	#######################
@@ -270,7 +270,7 @@ rule EXON_EXP_ENS:
 		ens="{base}/{TIME}/{sample}/exonExp_ENS/{sample}.exonExpression.ENS.txt"
 	version: config['samtools']
 	params:
-		rulename   = "exonExp.2",
+		rulename   = "EXON_EXP_ENS",
 		batch      =config[config['host']]['job_exonExp']
 	shell: """
 	#######################
@@ -299,7 +299,7 @@ rule FUSION_CATCHER:
 		"{base}/{TIME}/{sample}/fusion/fusion-catcher_summary_candidate_fusions.txt"
 	version: config['fusioncatcher']
 	params:
-		rulename = "fc",
+		rulename = "FUSION_CATCHER",
 		batch    = config[config['host']]['job_fusioncatch'],
 	shell: """
 	#######################
@@ -325,7 +325,7 @@ rule DeFuse:
 	version: config["defuse"]
 	resources: DeFuse=1
 	params:
-		rulename = "deFuse",
+		rulename = "DeFuse",
 		batch    = config[config['host']]["job_deFuse"],
 		defuse_config=NGS_PIPELINE + "/Tools_config/"+config["defuse_config"],
 		parallel = NGS_PIPELINE + "/scripts/parallel"
@@ -445,7 +445,7 @@ rule HapCall_RNASeq:
 		vcf="{base}/{TIME}/{sample}/calls/{sample}.HC_RNASeq.raw.vcf"
 	version: config["GATK_new"]
 	params:
-		rulename = "HC_RNA",
+		rulename = "HapCall_RNASeq",
 		batch    = config[config['host']]["job_gatk_RNA"]
 	shell: """
 	#######################
@@ -466,7 +466,7 @@ rule CoveragE:
 		"{subject}/{TIME}/{sample}/qc/{sample}.star.coverage.txt"
 	version: config["bedtools"]
 	params:
-		rulename = "coverage",
+		rulename = "CoveragE",
 		batch    = config[config['host']]["job_bedtools"]
 	shell: """
 	#######################
@@ -487,7 +487,7 @@ rule Sub_Fusion:
 	output:
 		"{subject}/{TIME}/{sample}/fusion/{sample}.actionable.fusion.txt"
 	params:
-		rulename = "Sub_F",
+		rulename = "Sub_Fusion",
 		batch    = config[config['host']]["job_default"]
 	shell: """
 	#######################
@@ -504,7 +504,7 @@ rule Actionable_fusion:
 	output:
 		"{subject}/{TIME}/{ACT_DIR}{subject}.fusion.actionable.txt"
 	params:
-		rulename = "Actionable_F",
+		rulename = "Actionable_fusion",
 		batch    = config[config['host']]["job_default"]
 	shell: """
 	#######################
