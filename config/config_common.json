@@ -64,6 +64,7 @@
 		"agilent.utr.v4"	:{"Normal":"20","Tumor":"20"},
 		"agilent.v4"		:{"Normal":"20","Tumor":"20"},
 		"agilent.v5"		:{"Normal":"20","Tumor":"20"},
+		"agilent.v7"		:{"Normal":"20","Tumor":"20"},
 		"agilent.utr.v5"	:{"Normal":"20","Tumor":"20"},
 		"niaid.agilent.v5"	:{"Normal":"20","Tumor":"20"},
 		"niaid.seqcapez.exome.v2":{"Normal":"20","Tumor":"20"},
@@ -76,7 +77,7 @@
 		"panel_paed_v5_w5.1"	:{"Normal":"20","Tumor":"50"},
 		"idt.xgen.exome.res"	:{"Normal":"10","Tumor":"20"}
 	},
-	"capture_list_for_mutationBurden_calc"	: ["clin.ex.v1", "clin.snv.v1", "clin.snv.v2", "seqcapez.hu.ex.v3", "seqcapez.hu.ex.utr.v1", "seqcapez.rms.v1", "panel_paed_v5_w5.1", "wholegenome"],
+	"capture_list_for_mutationBurden_calc"	: ["clin.ex.v1", "clin.snv.v1", "clin.snv.v2", "seqcapez.hu.ex.v3", "seqcapez.hu.ex.utr.v1", "seqcapez.rms.v1", "panel_paed_v5_w5.1", "agilent.v7", "wholegenome"],
 	"high_conf_somatic_threshold" : {
 		"clin.ex.v1"	:{"Normal":"20","Tumor":"20","VAF":"0.1"},
 		"seqcapez.hu.ex.v3"	:{"Normal":"20","Tumor":"20","VAF":"0.1"},
@@ -85,6 +86,7 @@
 		"clin.snv.v2"	:{"Normal":"20","Tumor":"50","VAF":"0.05"},
 		"seqcapez.rms.v1"	:{"Normal":"20","Tumor":"50","VAF":"0.1"},
 		"panel_paed_v5_w5.1"    :{"Normal":"20","Tumor":"20","VAF":"0.1"},
+		"agilent.v7"	:{"Normal":"20","Tumor":"20","VAF":"0.1"},
 		"wholegenome"	:{"Normal":"5","Tumor":"5","VAF":"0.1"}
 	},
 	"exclude_from_rnaseq"            : ["smarter.tcr"]
