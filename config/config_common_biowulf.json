@@ -21,7 +21,7 @@
 	"version_python"	: "2.7",
 	"version_blast"		: "2.5.0+",
 	"VEP"			: "86",
-	"IEDB"			: "/data/Clinomics/Tools/IEDB/",
+	"IEDB"			: "/opt/iedb",
 	"target_intervals"	:{
 		"wholegenome"		: "/data/Clinomics/Ref/khanlab/design/WholeGenome.target.hg19.merged.bed",
 		"seqcapez.hu.ex.v3"	: "/data/Clinomics/Ref/khanlab/design/SeqCap_EZ_Exome_v3_capture_trimed.target.hg19.merged.bed",
