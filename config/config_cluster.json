@@ -2,7 +2,7 @@
 	"biowulf.nih.gov":{
 		"job_default"    : "--partition=quick,norm    --time=01:00:00 --mem=02G  --cpus-per-task=1   --gres=lscratch:02",
 		"job_snpeff"     : "--partition=quick,norm    --time=02:00:00 --mem=10G  --cpus-per-task=16  --gres=lscratch:05",
-		"job_VEP"	 : "--partition=norm,ccr    --time=90:00:00 --mem=10G  --cpus-per-task=10  --gres=lscratch:05",
+		"job_VEP"	 : "--partition=norm,ccr    --time=90:00:00 --mem=100G  --cpus-per-task=20  --gres=lscratch:150",
 		"job_c_QC"       : "--partition=ccr,norm --time=10:00:00 --mem=10G  --cpus-per-task=2   --gres=lscratch:20",
 		"job_failedExon" : "--partition=quick,norm    --time=03:00:00 --mem=10G  --cpus-per-task=2   --gres=lscratch:05",
 		"job_copynumber" : "--partition=ccr,norm --time=04:00:00 --mem=10G  --cpus-per-task=25  --gres=lscratch:10",

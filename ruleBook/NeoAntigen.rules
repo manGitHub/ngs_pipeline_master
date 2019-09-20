@@ -144,17 +144,13 @@ rule pVACseq:
 	#######################
 	allele=`cut -f1 {wildcards.base}/{wildcards.TIME}/{params.normal}/HLA/{params.normal}.Calls.txt |grep -v Allele|tr '\\n' ',' |sed -e 's/,$//g'`
 	
-	module load pvacseq/{version} python/{params.python}
-	pvacseq run --iedb-install-directory {params.IEDB} -e 8  --fasta-size=200 {input} {wildcards.sample} ${{allele}} {{NNalign,NetMHC,NetMHCIIpan,NetMHCcons,NetMHCpan,PickPocket,SMM,SMMPMBEC,SMMalign}} {wildcards.base}/{wildcards.TIME}/{wildcards.sample}/NeoAntigen/8 &
-	pvacseq run --iedb-install-directory {params.IEDB} -e 9  --fasta-size=200 {input} {wildcards.sample} ${{allele}} {{NNalign,NetMHC,NetMHCIIpan,NetMHCcons,NetMHCpan,PickPocket,SMM,SMMPMBEC,SMMalign}} {wildcards.base}/{wildcards.TIME}/{wildcards.sample}/NeoAntigen/9 &
-	pvacseq run --iedb-install-directory {params.IEDB} -e 10 --fasta-size=200 {input} {wildcards.sample} ${{allele}} {{NNalign,NetMHC,NetMHCIIpan,NetMHCcons,NetMHCpan,PickPocket,SMM,SMMPMBEC,SMMalign}} {wildcards.base}/{wildcards.TIME}/{wildcards.sample}/NeoAntigen/10 &
-	pvacseq run --iedb-install-directory {params.IEDB} -e 11 --fasta-size=200 {input} {wildcards.sample} ${{allele}} {{NNalign,NetMHC,NetMHCIIpan,NetMHCcons,NetMHCpan,PickPocket,SMM,SMMPMBEC,SMMalign}} {wildcards.base}/{wildcards.TIME}/{wildcards.sample}/NeoAntigen/11 &
-	pvacseq run --iedb-install-directory {params.IEDB} -e 12 --fasta-size=200 {input} {wildcards.sample} ${{allele}} {{NNalign,NetMHC,NetMHCIIpan,NetMHCcons,NetMHCpan,PickPocket,SMM,SMMPMBEC,SMMalign}} {wildcards.base}/{wildcards.TIME}/{wildcards.sample}/NeoAntigen/12 &
-	pvacseq run --iedb-install-directory {params.IEDB} -e 13 --fasta-size=200 {input} {wildcards.sample} ${{allele}} {{NNalign,NetMHC,NetMHCIIpan,NetMHCcons,NetMHCpan,PickPocket,SMM,SMMPMBEC,SMMalign}} {wildcards.base}/{wildcards.TIME}/{wildcards.sample}/NeoAntigen/13 &
-	pvacseq run --iedb-install-directory {params.IEDB} -e 14 --fasta-size=200 {input} {wildcards.sample} ${{allele}} {{NNalign,NetMHC,NetMHCIIpan,NetMHCcons,NetMHCpan,PickPocket,SMM,SMMPMBEC,SMMalign}} {wildcards.base}/{wildcards.TIME}/{wildcards.sample}/NeoAntigen/14 &
+	module load pvactools/{version} 
+	#pvacseq run --iedb-install-directory {params.IEDB} -e 8  --fasta-size=50 {input} {wildcards.sample} ${{allele}} {{NNalign,NetMHC,NetMHCIIpan,NetMHCcons,NetMHCpan,PickPocket,SMM,SMMPMBEC,SMMalign}} {wildcards.base}/{wildcards.TIME}/{wildcards.sample}/NeoAntigen/8 &
+	pvacseq run --iedb-install-directory {params.IEDB} -e 8,9,10,11,12,13,14 -t ${{SLURM_CPUS_ON_NODE}} --fasta-size=50 {input} {wildcards.sample} ${{allele}} {{NNalign,NetMHC,NetMHCIIpan,NetMHCcons,NetMHCpan,PickPocket,SMM,SMMPMBEC,SMMalign}} {wildcards.base}/{wildcards.TIME}/{wildcards.sample}/NeoAntigen
 	wait
 	export LC_ALL=C
-	cat {wildcards.base}/{wildcards.TIME}/{wildcards.sample}/NeoAntigen/*/MHC_Class_I/*.final.tsv |sort |uniq >{output}
+	#cat {wildcards.base}/{wildcards.TIME}/{wildcards.sample}/NeoAntigen/*/MHC_Class_I/*.filtered.tsv |sort |uniq >{output}
+	sort {wildcards.base}/{wildcards.TIME}/{wildcards.sample}/NeoAntigen/MHC_Class_I/{wildcards.sample}.filtered.tsv |uniq > {output}
 	perl {params.tool} {output} |sort |uniq >{wildcards.base}/{wildcards.TIME}/{wildcards.sample}/NeoAntigen/{wildcards.sample}.final.txt
 	#######################
 	"""
